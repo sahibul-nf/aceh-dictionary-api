@@ -9,12 +9,10 @@
  Pada project ini diterapkan algoritma Jaro Winkler untuk menentukan similiarity karakter kata yang ditulis oleh pengguna dengan data di database.
 
 ## Credit
----
 
 - Data kamus di ambil dengan teknik scraping dari [kata.web.id](https://kata.web.id/)
 
 ## Support Me
----
 
 - 🚀 [Paypal](https://paypal.me/sahibulnf)
 
