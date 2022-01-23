@@ -25,7 +25,7 @@ func main() {
 	api := gin.Default()
 	v1 := api.Group("/api/v1/")
 
-	v1.POST("/advices", adviceHandler.GetAdvices)
+	v1.GET("/advices", adviceHandler.GetAdvices)
 
 	api.Run()
 
