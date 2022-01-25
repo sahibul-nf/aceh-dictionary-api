@@ -3,6 +3,7 @@ package handler
 import (
 	"aceh-dictionary-api/advice"
 	"aceh-dictionary-api/helper"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,15 +22,21 @@ func (h *adviceHandler) GetAdvices(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
-		response := helper.APIResponse("error", "Failed to get advices", http.StatusBadRequest, nil)
+		response := helper.APIResponse("error", "Failed to get word advices", http.StatusBadRequest, nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	advices, err := h.service.GetAdvices(input)
 	if err != nil {
-		response := helper.APIResponse("error", "Failed to get word advices", http.StatusBadRequest, nil)
-		c.JSON(http.StatusBadRequest, response)
+		response := helper.APIResponse("error", "Failed to get word advices", http.StatusBadGateway, nil)
+		c.JSON(http.StatusBadGateway, response)
+		return
+	}
+
+	if len(advices) < 1 {
+		response := helper.APIResponse("success", fmt.Sprintf("Opps, no data found for similar to %s", input), http.StatusNoContent, advices)
+		c.JSON(http.StatusNoContent, response)
 		return
 	}
 
