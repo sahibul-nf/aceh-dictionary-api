@@ -3,20 +3,21 @@ package config
 import (
 	"aceh-dictionary-api/dictionary"
 	"fmt"
+	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func SetupDatabaseConnection() *gorm.DB {
-	// dbUser := os.Getenv("DB_USER")
-	// dbHost := os.Getenv("DB_HOST")
-	// dbName := os.Getenv("DB_NAME")
-	// dbPass := os.Getenv("DB_PASS")
-	// dbPort := os.Getenv("DB_PORT")
+	dbUser := os.Getenv("DB_USER")
+	dbHost := os.Getenv("DB_HOST")
+	dbName := os.Getenv("DB_NAME")
+	dbPass := os.Getenv("DB_PASS")
+	dbPort := os.Getenv("DB_PORT")
 
-	dsn := "host=localhost user=sahibul password= dbname=dictionary port=5433 sslmode=disable TimeZone=Asia/Shanghai"
-	// dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai", dbHost, dbUser, dbPass, dbName, dbPort)
+	// dsn := "host=localhost user=sahibul password= dbname=dictionary port=5433 sslmode=disable TimeZone=Asia/Shanghai"
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai", dbHost, dbUser, dbPass, dbName, dbPort)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
