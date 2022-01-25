@@ -21,9 +21,14 @@ func main() {
 
 	server := gin.Default()
 
-	adviceRoutes := server.Group("/api/v1")
+	adviceRoutes := server.Group("api/v1")
 	{
 		adviceRoutes.GET("/advices", adviceHandler.GetAdvices)
+	}
+
+	checkRoutes := server.Group("api/v1")
+	{
+		checkRoutes.GET("/check", handler.Health)
 	}
 
 	server.Run()
