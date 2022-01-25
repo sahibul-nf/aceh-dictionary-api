@@ -35,8 +35,8 @@ func (h *adviceHandler) GetAdvices(c *gin.Context) {
 	}
 
 	if len(advices) < 1 {
-		response := helper.APIResponse("success", fmt.Sprintf("Opps, no data found for similar to %s", input), http.StatusNoContent, advices)
-		c.JSON(http.StatusNoContent, response)
+		response := helper.APIResponse("success", fmt.Sprintf("Opps, no data found for similar to %s", input), http.StatusOK, advices)
+		c.JSON(http.StatusOK, response)
 		return
 	}
 
