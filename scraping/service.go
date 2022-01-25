@@ -140,16 +140,19 @@ func FetchAcehIndoDictionary() []dictionary.AcehIndo {
 
 	words := FetchWordByCharPerPage()
 	fmt.Println(len(words))
+	// lengthWord := len(words)
 
 	for _, word := range words {
 		fmt.Println(word)
 		fmt.Println()
+		// process := float64((i / lengthWord) * (100 / 100))
+		// fmt.Println(process)
 
 		newWord := word
 
 		if strings.Contains(word, " ") {
 			newWord = strings.Replace(word, " ", "-", -1)
-			fmt.Println(newWord)
+			// fmt.Println(newWord)
 		}
 
 		res, err := http.Get(fmt.Sprintf("https://kata.web.id/kamus/indonesia-aceh/arti-kata/%s", newWord))
@@ -191,7 +194,7 @@ func FetchAcehIndoDictionary() []dictionary.AcehIndo {
 
 	}
 
-	fmt.Println(len(rows))
+	// fmt.Println(len(rows))
 
 	return rows
 }

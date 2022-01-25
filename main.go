@@ -2,38 +2,39 @@ package main
 
 import (
 	"aceh-dictionary-api/advice"
+	"aceh-dictionary-api/config"
 	"aceh-dictionary-api/handler"
-	"log"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-func main() {
-	dsn := "root:@tcp(127.0.0.1:3306)/kamus_aceh?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+var (
+	db               *gorm.DB          = config.SetupDatabaseConnection()
+	adviceRepository advice.Repository = advice.NewRepository(db)
+	adviceService    advice.Service    = advice.NewService(adviceRepository)
+	adviceHandler                      = handler.NewAdviceHandler(adviceService)
+)
 
-	if err != nil {
-		log.Fatal(err)
+func main() {
+	defer config.CloseDatabaseConnection(db)
+
+	server := gin.Default()
+
+	adviceRoutes := server.Group("/api/v1/")
+	{
+		adviceRoutes.GET("/advices", adviceHandler.GetAdvices)
 	}
 
-	adviceRepository := advice.NewRepository(db)
-	adviceService := advice.NewService(adviceRepository)
-	adviceHandler := handler.NewAdviceHandler(adviceService)
-
-	api := gin.Default()
-	v1 := api.Group("/api/v1/")
-
-	v1.GET("/advices", adviceHandler.GetAdvices)
-
-	api.Run()
+	server.Run()
 
 	// SCRAPING WORD BOOK (DATA) AND INSERT TO DB
 	// dictRepository := dictionary.NewRepository(db)
 	// dictService := dictionary.NewService(dictRepository)
 
+	// fmt.Println("Start scraping data \n -------")
 	// data := scraping.FetchAcehIndoDictionary()
+	// fmt.Println("Done scraping data")
 
 	// isSuccess, err := dictService.SaveData(data)
 	// if err != nil {
@@ -41,4 +42,7 @@ func main() {
 	// }
 
 	// fmt.Println(isSuccess)
+	// if isSuccess {
+	// 	fmt.Println("Successfully scraping data")
+	// }
 }
