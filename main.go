@@ -31,8 +31,23 @@ func main() {
 		checkRoutes.GET("/check", handler.Health)
 	}
 
-	handler.SaveData(db)
-
 	server.Run()
 
+	// // SCRAPING WORD BOOK (DATA) AND INSERT TO DB
+	// dictRepository := dictionary.NewRepository(db)
+	// dictService := dictionary.NewService(dictRepository)
+
+	// fmt.Println("Start scraping data \n -------")
+	// data := scraping.FetchAcehIndoDictionary()
+	// fmt.Println("Done scraping data")
+
+	// isSuccess, err := dictService.SaveData(data)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// fmt.Println(isSuccess)
+	// if isSuccess {
+	// 	fmt.Println("Successfully scraping data")
+	// }
 }
