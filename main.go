@@ -3,12 +3,9 @@ package main
 import (
 	"aceh-dictionary-api/advice"
 	"aceh-dictionary-api/config"
-	"aceh-dictionary-api/dictionary"
 	"aceh-dictionary-api/handler"
-	"aceh-dictionary-api/scraping"
-	"fmt"
-	"log"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -22,35 +19,20 @@ var (
 func main() {
 	defer config.CloseDatabaseConnection(db)
 
-	// server := gin.Default()
+	server := gin.Default()
 
-	// adviceRoutes := server.Group("api/v1")
-	// {
-	// 	adviceRoutes.GET("/advices", adviceHandler.GetAdvices)
-	// }
-
-	// checkRoutes := server.Group("api/v1")
-	// {
-	// 	checkRoutes.GET("/check", handler.Health)
-	// }
-
-	// server.Run()
-
-	// SCRAPING WORD BOOK (DATA) AND INSERT TO DB
-	dictRepository := dictionary.NewRepository(db)
-	dictService := dictionary.NewService(dictRepository)
-
-	fmt.Println("Start scraping data \n -------")
-	data := scraping.FetchAcehIndoDictionary()
-	fmt.Println("Done scraping data")
-
-	isSuccess, err := dictService.SaveData(data)
-	if err != nil {
-		log.Fatal(err)
+	adviceRoutes := server.Group("api/v1")
+	{
+		adviceRoutes.GET("/advices", adviceHandler.GetAdvices)
 	}
 
-	fmt.Println(isSuccess)
-	if isSuccess {
-		fmt.Println("Successfully scraping data")
+	checkRoutes := server.Group("api/v1")
+	{
+		checkRoutes.GET("/check", handler.Health)
 	}
+
+	handler.SaveData(db)
+
+	server.Run()
+
 }
