@@ -21,7 +21,7 @@ func main() {
 
 	server := gin.Default()
 
-	adviceRoutes := server.Group("/api/v1/")
+	adviceRoutes := server.Group("/api/v1")
 	{
 		adviceRoutes.GET("/advices", adviceHandler.GetAdvices)
 	}
