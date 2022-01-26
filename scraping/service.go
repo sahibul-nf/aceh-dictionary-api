@@ -135,8 +135,8 @@ func FetchWordByCharPerPage() []string {
 	return words
 }
 
-func FetchAcehIndoDictionary() []dictionary.AcehIndo {
-	rows := []dictionary.AcehIndo{}
+func FetchAcehIndoDictionary() []dictionary.DictionaryInput {
+	rows := []dictionary.DictionaryInput{}
 
 	words := FetchWordByCharPerPage()
 	fmt.Println(len(words))
@@ -172,7 +172,7 @@ func FetchAcehIndoDictionary() []dictionary.AcehIndo {
 		}
 
 		doc.Find("tbody").Each(func(i int, s *goquery.Selection) {
-			row := dictionary.AcehIndo{}
+			row := dictionary.DictionaryInput{}
 			var aceh []string
 			var indo string
 

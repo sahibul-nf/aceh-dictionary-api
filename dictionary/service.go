@@ -1,7 +1,7 @@
 package dictionary
 
 type Service interface {
-	SaveData(input DictionaryInput) (bool, error)
+	SaveData(input AcehIndo) (bool, error)
 }
 
 type service struct {
@@ -12,7 +12,7 @@ func NewService(r Repository) *service {
 	return &service{r}
 }
 
-func (s *service) SaveData(input []AcehIndo) (bool, error) {
+func (s *service) SaveData(input AcehIndo) (bool, error) {
 
 	isSave, err := s.repo.Save(input)
 	if err != nil {
