@@ -10,7 +10,7 @@ import (
 )
 
 func SetupDatabaseConnection() *gorm.DB {
-	// dsn := "host=localhost user=sahibul password= dbname=dictionary port=5433 sslmode=disable TimeZone=Asia/Shanghai"
+	// dsn := "host=localhost user= password= dbname= port= sslmode=disable TimeZone=Asia/Shanghai"
 
 	dbUser := os.Getenv("DB_USER")
 	dbHost := os.Getenv("DB_HOST")
