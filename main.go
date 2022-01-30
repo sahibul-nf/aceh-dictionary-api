@@ -27,7 +27,7 @@ func main() {
 
 	adviceRoutes := server.Group("api/v1")
 	{
-		adviceRoutes.GET("/advices", adviceHandler.GetAdvices)
+		adviceRoutes.POST("/advices", adviceHandler.GetAdvices)
 	}
 
 	dictionaryRoutes := server.Group("api/v1")
