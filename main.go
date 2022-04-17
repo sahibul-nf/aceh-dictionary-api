@@ -28,17 +28,18 @@ func main() {
 
 	adviceRoutes := server.Group("api/v1")
 	{
-		adviceRoutes.POST("/advices", adviceHandler.GetAdvices)
+		adviceRoutes.GET("/advices", adviceHandler.GetAdvices)
 	}
 
 	dictionaryRoutes := server.Group("api/v1")
 	{
-		dictionaryRoutes.POST("/dictionary", dictHandler.CreateDictionaryData)
+		dictionaryRoutes.POST("/dictionaries", dictHandler.CreateDictionaryData)
+		dictionaryRoutes.GET("/dictionaries", dictHandler.GetAllDictionaryData)
 	}
 
 	checkRoutes := server.Group("api/v1")
 	{
-		checkRoutes.GET("/check", handler.Health)
+		checkRoutes.GET("/", handler.Index)
 	}
 
 	server.Run()

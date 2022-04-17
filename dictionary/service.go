@@ -2,6 +2,7 @@ package dictionary
 
 type Service interface {
 	SaveData(input AcehIndo) (bool, error)
+	GetAllData() ([]AcehIndo, error)
 }
 
 type service struct {
@@ -20,4 +21,14 @@ func (s *service) SaveData(input AcehIndo) (bool, error) {
 	}
 
 	return isSave, nil
+}
+
+func (s *service) GetAllData() ([]AcehIndo, error) {
+
+	data, err := s.repo.FindAll()
+	if err != nil {
+		return data, err
+	}
+
+	return data, nil
 }

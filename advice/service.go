@@ -7,7 +7,7 @@ import (
 )
 
 type Service interface {
-	GetAdvices(input QueryInput) ([]Advice, error)
+	GetAdvices(query string) ([]Advice, error)
 }
 
 type service struct {
@@ -18,11 +18,11 @@ func NewService(r Repository) *service {
 	return &service{r}
 }
 
-func (s *service) GetAdvices(input QueryInput) ([]Advice, error) {
+func (s *service) GetAdvices(query string) ([]Advice, error) {
 
 	advices := []Advice{}
 
-	acehIndo, err := s.repository.FindAll()
+	acehIndo, err := s.repository.FindLike(query)
 	if err != nil {
 		return advices, err
 	}
@@ -30,13 +30,14 @@ func (s *service) GetAdvices(input QueryInput) ([]Advice, error) {
 	var result float64
 
 	for _, v := range acehIndo {
-		result = jwd.Calculate(input.Input, v.Aceh)
+		result = jwd.Calculate(query, v.Aceh)
 		// fmt.Println(v.Aceh)
 		// fmt.Println(result)
 		// fmt.Println()
 
 		if result >= 0.75 {
 			advices = append(advices, Advice{
+				ID:          v.ID,
 				Aceh:        v.Aceh,
 				Indonesia:   v.Indonesia,
 				Similiarity: result,

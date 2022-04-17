@@ -42,3 +42,16 @@ func (h *dictionaryHandler) CreateDictionaryData(c *gin.Context) {
 	response := helper.APIResponse("success", "Successfully to create dictionary data", http.StatusOK, isSuccess)
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *dictionaryHandler) GetAllDictionaryData(c *gin.Context)  {
+	
+	data, err := h.service.GetAllData()
+	if err != nil {
+		response := helper.APIResponse("error", "Failed to get all dictionary data", http.StatusBadRequest, data)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("success", "Successfully to get all dictionary data", http.StatusOK, data)
+	c.JSON(http.StatusOK, response)
+}

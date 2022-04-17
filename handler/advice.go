@@ -18,14 +18,16 @@ func NewAdviceHandler(adviceService advice.Service) *adviceHandler {
 }
 
 func (h *adviceHandler) GetAdvices(c *gin.Context) {
-	var input advice.QueryInput
+	// var input advice.QueryInput
 
-	err := c.ShouldBindJSON(&input)
-	if err != nil {
-		response := helper.APIResponse("error", "Failed to get word advices", http.StatusBadRequest, nil)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
+	// err := c.ShouldBindJSON(&input)
+	// if err != nil {
+	// 	response := helper.APIResponse("error", "Failed to get word advices", http.StatusBadRequest, nil)
+	// 	c.JSON(http.StatusBadRequest, response)
+	// 	return
+	// }
+
+	input := c.Query("input")
 
 	advices, err := h.service.GetAdvices(input)
 	if err != nil {
@@ -35,7 +37,7 @@ func (h *adviceHandler) GetAdvices(c *gin.Context) {
 	}
 
 	if len(advices) < 1 {
-		response := helper.APIResponse("success", fmt.Sprintf("Opps, no data found for similar to %s", input.Input), http.StatusOK, advices)
+		response := helper.APIResponse("success", fmt.Sprintf("Opps, no data found for similar to %s", input), http.StatusOK, advices)
 		c.JSON(http.StatusOK, response)
 		return
 	}
