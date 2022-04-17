@@ -37,10 +37,10 @@ func main() {
 		dictionaryRoutes.GET("/dictionaries", dictHandler.GetAllDictionaryData)
 	}
 
-	checkRoutes := server.Group("api/v1")
-	{
-		checkRoutes.GET("/", handler.Index)
-	}
+	// checkRoutes := server.Group("api/v1")
+	// {
+	server.GET("/", handler.Index)
+	// }
 
 	server.Run()
 }
