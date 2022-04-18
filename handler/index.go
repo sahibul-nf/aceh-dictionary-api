@@ -17,6 +17,7 @@ func Index(ctx *gin.Context) {
 			"support": map[string]string{
 				"paypal 💰":               "https://www.paypal.com/paypalme/sahibulnf",
 				"buy me a coffee ☕️":     "https://www.buymeacoffee.com/sahibulnf",
+				"karyakarsa":             "https://karyakarsa.com/sahibul_nf",
 				"send thank you message": "https://wa.link/r3amjb",
 			},
 		},
