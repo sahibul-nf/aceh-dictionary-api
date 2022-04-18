@@ -17,7 +17,7 @@ func Index(ctx *gin.Context) {
 			"support": map[string]string{
 				"paypal 💰":               "https://www.paypal.com/paypalme/sahibulnf",
 				"buy me a coffee ☕️":     "https://www.buymeacoffee.com/sahibulnf",
-				"send thank you message": "Thank you, bro! Good luck 👍 \n#acehneseDictionaryAPI",
+				"send thank you message": "https://wa.link/r3amjb",
 			},
 		},
 		"source": "https://github.com/sahibul-nf/aceh-dictionary-api",
