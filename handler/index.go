@@ -15,8 +15,8 @@ func Index(ctx *gin.Context) {
 			"email":    "sahibulnuzulfirdaus13@gmail.com",
 			"linkedIn": "https://www.linkedin.com/in/sahibul-nf/",
 			"support": map[string]string{
-				"paypal 💰":               "",
-				"buy me a coffee ☕️":     "",
+				"paypal 💰":               "https://www.paypal.com/paypalme/sahibulnf",
+				"buy me a coffee ☕️":     "https://www.buymeacoffee.com/sahibulnf",
 				"send thank you message": "Thank you, bro! Good luck 👍 \n#acehneseDictionaryAPI",
 			},
 		},
