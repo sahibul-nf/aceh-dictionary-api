@@ -57,7 +57,9 @@ func (s *service) GetAdvices(query string) ([]Advice, error) {
 				filters = append(filters, v)
 			}
 		}
+		return filters, nil
+	} else {
+		return advices, nil
 	}
 
-	return filters, nil
 }
