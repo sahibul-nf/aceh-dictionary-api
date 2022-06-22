@@ -37,6 +37,7 @@ func main() {
 		dictionaryRoutes.GET("/vocabularies", vocabHandler.GetAllVocabularyData)
 	}
 
+	//
 	server.GET("/", handler.Index)
 	server.Run()
 }
