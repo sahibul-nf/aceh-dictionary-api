@@ -1,7 +1,7 @@
 package scraping
 
 import (
-	"aceh-dictionary-api/dictionary"
+	"aceh-dictionary-api/vocabulary"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,7 +14,7 @@ type Service interface {
 	FetchWordByCharPerPage() []string
 	ListOfChar() []string
 	CheckPageCount(char string) int
-	FetchAcehIndoDictionary() []dictionary.AcehIndo
+	FetchAcehIndoDictionary() []vocabulary.Vocabulary
 }
 
 type service struct {
@@ -135,8 +135,8 @@ func FetchWordByCharPerPage() []string {
 	return words
 }
 
-func FetchAcehIndoDictionary() []dictionary.DictionaryInput {
-	rows := []dictionary.DictionaryInput{}
+func FetchAcehIndoDictionary() []vocabulary.VocabularyInput {
+	rows := []vocabulary.VocabularyInput{}
 
 	words := FetchWordByCharPerPage()
 	fmt.Println(len(words))
@@ -163,7 +163,7 @@ func FetchAcehIndoDictionary() []dictionary.DictionaryInput {
 		defer res.Body.Close()
 
 		if res.StatusCode != 200 {
-			// log.Fatalf("status code error: %d %s", res.StatusCode, res.Status)
+			log.Fatalf("status code error: %d %s", res.StatusCode, res.Status)
 		}
 
 		doc, err := goquery.NewDocumentFromReader(res.Body)
@@ -172,7 +172,7 @@ func FetchAcehIndoDictionary() []dictionary.DictionaryInput {
 		}
 
 		doc.Find("tbody").Each(func(i int, s *goquery.Selection) {
-			row := dictionary.DictionaryInput{}
+			row := vocabulary.VocabularyInput{}
 			var aceh []string
 			var indo string
 

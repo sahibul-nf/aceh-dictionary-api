@@ -29,10 +29,10 @@ func Index(ctx *gin.Context) {
 				"example":     "http://aceh-dictionary.herokuapp.com/api/v1/advices?input=lon",
 				"description": "Returns a list of suggested words that match the Input.",
 			},
-			"dictionary": map[string]string{
+			"vocabularies": map[string]string{
 				"method":      http.MethodGet,
-				"pattern":     "http://aceh-dictionary.herokuapp.com/api/v1/dictionaries",
-				"description": "Returns a list of dictionary data.",
+				"pattern":     "http://aceh-dictionary.herokuapp.com/api/v1/vocabularies",
+				"description": "Returns a list of vocabulary data.",
 			},
 		},
 	}

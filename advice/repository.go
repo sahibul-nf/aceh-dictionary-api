@@ -1,14 +1,14 @@
 package advice
 
 import (
-	"aceh-dictionary-api/dictionary"
+	"aceh-dictionary-api/vocabulary"
 	"strings"
 
 	"gorm.io/gorm"
 )
 
 type Repository interface {
-	FindLike(query string) ([]dictionary.AcehIndo, error)
+	FindLike(query string) ([]vocabulary.Vocabulary, error)
 }
 
 type repository struct {
@@ -19,13 +19,13 @@ func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
-func (r *repository) FindLike(query string) ([]dictionary.AcehIndo, error) {
-	var acehIndos []dictionary.AcehIndo
+func (r *repository) FindLike(query string) ([]vocabulary.Vocabulary, error) {
+	var vocabs []vocabulary.Vocabulary
 
-	err := r.db.Where("aceh LIKE ?", "%" + strings.TrimSpace(query) + "%").Find(&acehIndos).Error
+	err := r.db.Where("aceh LIKE ?", "%"+strings.TrimSpace(query)+"%").Find(&vocabs).Error
 	if err != nil {
-		return acehIndos, err
+		return vocabs, err
 	}
-	
-	return acehIndos, nil
+
+	return vocabs, nil
 }

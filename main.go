@@ -3,8 +3,8 @@ package main
 import (
 	"aceh-dictionary-api/advice"
 	"aceh-dictionary-api/config"
-	"aceh-dictionary-api/dictionary"
 	"aceh-dictionary-api/handler"
+	"aceh-dictionary-api/vocabulary"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,9 +15,9 @@ var (
 	adviceService    = advice.NewService(adviceRepository)
 	adviceHandler    = handler.NewAdviceHandler(adviceService)
 
-	dictRepository = dictionary.NewRepository(db)
-	dictService    = dictionary.NewService(dictRepository)
-	dictHandler    = handler.NewDictionaryHandler(dictService)
+	vocabRepository = vocabulary.NewRepository(db)
+	vocabService    = vocabulary.NewService(vocabRepository)
+	vocabHandler    = handler.NewVocabularyHandler(vocabService)
 )
 
 func main() {
@@ -33,15 +33,11 @@ func main() {
 
 	dictionaryRoutes := server.Group("api/v1")
 	{
-		dictionaryRoutes.POST("/dictionaries", dictHandler.CreateDictionaryData)
-		dictionaryRoutes.GET("/dictionaries", dictHandler.GetAllDictionaryData)
+		dictionaryRoutes.POST("/vocabularies", vocabHandler.AddNewVocabulary)
+		dictionaryRoutes.GET("/vocabularies", vocabHandler.GetAllVocabularyData)
 	}
 
-	// checkRoutes := server.Group("api/v1")
-	// {
 	server.GET("/", handler.Index)
-	// }
-
 	server.Run()
 }
 

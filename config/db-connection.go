@@ -1,7 +1,7 @@
 package config
 
 import (
-	"aceh-dictionary-api/dictionary"
+	"aceh-dictionary-api/vocabulary"
 	"fmt"
 	"os"
 
@@ -25,7 +25,7 @@ func SetupDatabaseConnection() *gorm.DB {
 		panic("Failed to create a connection to database")
 	}
 
-	db.AutoMigrate(&dictionary.AcehIndo{})
+	db.AutoMigrate(&vocabulary.Vocabulary{})
 	fmt.Println("Database connected!")
 
 	return db

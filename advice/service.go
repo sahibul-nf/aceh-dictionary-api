@@ -22,14 +22,14 @@ func (s *service) GetAdvices(query string) ([]Advice, error) {
 
 	advices := []Advice{}
 
-	acehIndo, err := s.repository.FindLike(query)
+	vocabs, err := s.repository.FindLike(query)
 	if err != nil {
 		return advices, err
 	}
 
 	var result float64
 
-	for _, v := range acehIndo {
+	for _, v := range vocabs {
 		result = jwd.Calculate(query, v.Aceh)
 		// fmt.Println(v.Aceh)
 		// fmt.Println(result)
