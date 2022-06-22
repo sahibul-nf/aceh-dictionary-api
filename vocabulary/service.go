@@ -18,6 +18,7 @@ func (s *service) SaveData(input VocabularyInput) (bool, error) {
 	var vocab Vocabulary
 	vocab.Aceh = input.Aceh
 	vocab.Indonesia = input.Indonesia
+	vocab.English = input.English
 
 	isSave, err := s.repo.Save(vocab)
 	if err != nil {
