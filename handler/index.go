@@ -23,10 +23,10 @@ func Index(ctx *gin.Context) {
 		},
 		"source": "https://github.com/sahibul-nf/aceh-dictionary-api",
 		"endpoints": map[string]interface{}{
-			"advices": map[string]string{
+			"search": map[string]string{
 				"method":      http.MethodGet,
-				"pattern":     "http://aceh-dictionary.herokuapp.com/api/v1/advices?input=YOUR_QUERY",
-				"example":     "http://aceh-dictionary.herokuapp.com/api/v1/advices?input=lon",
+				"pattern":     "http://aceh-dictionary.herokuapp.com/api/v1/search?q=YOUR_QUERY",
+				"example":     "http://aceh-dictionary.herokuapp.com/api/v1/search?q=pike",
 				"description": "Returns a list of suggested words that match the Input.",
 			},
 			"dictionaries": map[string]string{

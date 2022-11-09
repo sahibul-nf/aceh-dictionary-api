@@ -9,31 +9,31 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type adviceHandler struct {
+type searchHandler struct {
 	service search.Service
 }
 
-func NewAdviceHandler(adviceService search.Service) *adviceHandler {
-	return &adviceHandler{adviceService}
+func NewSearchHandler(adviceService search.Service) *searchHandler {
+	return &searchHandler{adviceService}
 }
 
-func (h *adviceHandler) GetAdvices(c *gin.Context) {
+func (h *searchHandler) Search(c *gin.Context) {
 
 	input := c.Query("q")
 
-	advices, err := h.service.GetRecommendation(input)
+	recommendationList, err := h.service.GetRecommendationWords(input)
 	if err != nil {
-		response := helper.APIResponse("Failed to get word advices", http.StatusBadGateway, nil)
+		response := helper.APIResponse("Failed to get recommendation list word", http.StatusBadGateway, nil)
 		c.JSON(http.StatusBadGateway, response)
 		return
 	}
 
-	if len(advices) < 1 {
-		response := helper.APIResponse(fmt.Sprintf("Opps, no data found for similar to %s", input), http.StatusOK, advices)
+	if len(recommendationList) < 1 {
+		response := helper.APIResponse(fmt.Sprintf("Opps, no data found for similar to %s", input), http.StatusOK, recommendationList)
 		c.JSON(http.StatusOK, response)
 		return
 	}
 
-	response := helper.APIResponse("Successfully to get word advice", http.StatusOK, advices)
+	response := helper.APIResponse("Successfully to get recommendation list word", http.StatusOK, recommendationList)
 	c.JSON(http.StatusOK, response)
 }

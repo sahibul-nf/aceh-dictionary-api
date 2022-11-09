@@ -7,7 +7,7 @@ import (
 )
 
 type Service interface {
-	GetRecommendation(query string) ([]Advice, error)
+	GetRecommendationWords(query string) ([]RecommendationWord, error)
 }
 
 type service struct {
@@ -18,48 +18,43 @@ func NewService(r Repository) *service {
 	return &service{r}
 }
 
-func (s *service) GetRecommendation(query string) ([]Advice, error) {
+func (s *service) GetRecommendationWords(query string) ([]RecommendationWord, error) {
 
-	advices := []Advice{}
+	recommendationWords := []RecommendationWord{}
 
-	vocabs, err := s.repository.FindLike(query)
+	dictionaries, err := s.repository.FindLike(query)
 	if err != nil {
-		return advices, err
+		return recommendationWords, err
 	}
 
-	var result float64
-
-	for _, v := range vocabs {
-		result = jwd.Calculate(query, v.Aceh)
-		// fmt.Println(v.Aceh)
-		// fmt.Println(result)
-		// fmt.Println()
-
+	for _, v := range dictionaries {
+		result := jwd.Calculate(query, v.Aceh)
 		if result >= 0.75 {
-			advices = append(advices, Advice{
+			recommendationWords = append(recommendationWords, RecommendationWord{
 				ID:          v.ID,
 				Aceh:        v.Aceh,
 				Indonesia:   v.Indonesia,
+				English:     v.English,
 				Similiarity: result,
 			})
 		}
 	}
 
-	sort.Slice(advices, func(i, j int) bool {
-		return advices[i].Similiarity > advices[j].Similiarity
+	sort.Slice(recommendationWords, func(i, j int) bool {
+		return recommendationWords[i].Similiarity > recommendationWords[j].Similiarity
 	})
 
-	filters := []Advice{}
+	filters := []RecommendationWord{}
 
-	if len(advices) > 5 {
-		for i, v := range advices {
+	if len(recommendationWords) > 5 {
+		for i, v := range recommendationWords {
 			if i < 5 {
 				filters = append(filters, v)
 			}
 		}
 		return filters, nil
 	} else {
-		return advices, nil
+		return recommendationWords, nil
 	}
 
 }

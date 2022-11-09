@@ -11,9 +11,9 @@ import (
 
 var (
 	db               = config.SetupDatabaseConnection()
-	adviceRepository = search.NewRepository(db)
-	adviceService    = search.NewService(adviceRepository)
-	adviceHandler    = handler.NewAdviceHandler(adviceService)
+	searchRepository = search.NewRepository(db)
+	searchService    = search.NewService(searchRepository)
+	searchHandler    = handler.NewSearchHandler(searchService)
 
 	dictionaryRepository = dictionary.NewRepository(db)
 	dictionaryService    = dictionary.NewService(dictionaryRepository)
@@ -26,9 +26,9 @@ func main() {
 	server := gin.Default()
 	server.Use(CORSMiddleware())
 
-	adviceRoutes := server.Group("api/v1")
+	searchRoutes := server.Group("api/v1")
 	{
-		adviceRoutes.GET("/advices", adviceHandler.GetAdvices)
+		searchRoutes.GET("/search", searchHandler.Search)
 	}
 
 	dictionaryRoutes := server.Group("api/v1")
@@ -37,7 +37,6 @@ func main() {
 		dictionaryRoutes.GET("/dictionaries", dictionaryHandler.GetDictionaries)
 	}
 
-	//
 	server.GET("/", handler.Index)
 	server.Run()
 }
