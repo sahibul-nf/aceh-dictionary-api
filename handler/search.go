@@ -3,6 +3,7 @@ package handler
 import (
 	"aceh-dictionary-api/helper"
 	"aceh-dictionary-api/search"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -23,17 +24,21 @@ func (h *searchHandler) Search(c *gin.Context) {
 
 	recommendationList, err := h.service.GetRecommendationWords(input)
 	if err != nil {
-		response := helper.APIResponse("Failed to get recommendation list word", http.StatusBadGateway, nil)
-		c.JSON(http.StatusBadGateway, response)
+		errors := err
+
+		response := helper.APIResponse("Failed to get recommendation list word", http.StatusInternalServerError, recommendationList, errors)
+		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
 	if len(recommendationList) < 1 {
-		response := helper.APIResponse(fmt.Sprintf("Opps, no data found for similar to %s", input), http.StatusOK, recommendationList)
-		c.JSON(http.StatusOK, response)
+		errors := errors.New("no recommendation list word found")
+
+		response := helper.APIResponse(fmt.Sprintf("Opps, no data found for similar to %s", input), http.StatusNoContent, recommendationList, errors)
+		c.JSON(http.StatusNoContent, response)
 		return
 	}
 
-	response := helper.APIResponse("Successfully to get recommendation list word", http.StatusOK, recommendationList)
+	response := helper.APIResponse("Successfully to get recommendation list word", http.StatusOK, recommendationList, nil)
 	c.JSON(http.StatusOK, response)
 }

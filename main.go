@@ -1,10 +1,12 @@
 package main
 
 import (
+	"aceh-dictionary-api/auth"
 	"aceh-dictionary-api/config"
 	"aceh-dictionary-api/dictionary"
 	"aceh-dictionary-api/handler"
 	"aceh-dictionary-api/search"
+	"aceh-dictionary-api/user"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,6 +20,11 @@ var (
 	dictionaryRepository = dictionary.NewRepository(db)
 	dictionaryService    = dictionary.NewService(dictionaryRepository)
 	dictionaryHandler    = handler.NewDictionaryHandler(dictionaryService)
+
+	userRepository = user.NewRepository(db)
+	userService    = user.NewService(userRepository)
+	authService    = auth.NewService()
+	userHandler    = handler.NewUserHandler(userService, authService)
 )
 
 func main() {
@@ -35,6 +42,11 @@ func main() {
 	{
 		dictionaryRoutes.POST("/dictionaries", dictionaryHandler.AddNewDictionary)
 		dictionaryRoutes.GET("/dictionaries", dictionaryHandler.GetDictionaries)
+	}
+
+	userRoutes := server.Group("api/v1")
+	{
+		userRoutes.POST("/users", userHandler.RegisterUser)
 	}
 
 	server.GET("/", handler.Index)

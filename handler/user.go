@@ -1,0 +1,51 @@
+package handler
+
+import (
+	"aceh-dictionary-api/auth"
+	"aceh-dictionary-api/helper"
+	"aceh-dictionary-api/user"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+type userHandler struct {
+	userService user.Service
+	authService auth.Service
+}
+
+func NewUserHandler(userService user.Service, authService auth.Service) *userHandler {
+	return &userHandler{userService, authService}
+}
+
+func (h *userHandler) RegisterUser(c *gin.Context) {
+	var input user.RegisterUserInput
+
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.ErrorValidationFormat(err)
+
+		response := helper.APIResponse("Failed to register user", http.StatusBadRequest, nil, errors)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	newUser, err := h.userService.RegisterUser(input)
+	if err != nil {
+		response := helper.APIResponse("Failed to register user", http.StatusConflict, nil, err)
+		c.JSON(http.StatusConflict, response)
+		return
+	}
+
+	token, err := h.authService.GenerateToken(newUser.ID)
+	if err != nil {
+		response := helper.APIResponse("Failed to register user", http.StatusBadRequest, nil, err)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	formatter := user.FormatUser(newUser, token)
+
+	response := helper.APIResponse("Successfully to register user", http.StatusOK, formatter, nil)
+	c.JSON(http.StatusOK, response)
+}
