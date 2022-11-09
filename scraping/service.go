@@ -1,7 +1,7 @@
 package scraping
 
 import (
-	"aceh-dictionary-api/vocabulary"
+	"aceh-dictionary-api/dictionary"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,7 +14,7 @@ type Service interface {
 	FetchWordByCharPerPage() []string
 	ListOfChar() []string
 	CheckPageCount(char string) int
-	FetchAcehIndoDictionary() []vocabulary.Vocabulary
+	FetchAcehIndoDictionary() []dictionary.Dictionary
 }
 
 type service struct {
@@ -135,8 +135,8 @@ func FetchWordByCharPerPage() []string {
 	return words
 }
 
-func FetchAcehIndoDictionary() []vocabulary.VocabularyInput {
-	rows := []vocabulary.VocabularyInput{}
+func FetchAcehIndoDictionary() []dictionary.DictionaryInput {
+	rows := []dictionary.DictionaryInput{}
 
 	words := FetchWordByCharPerPage()
 	fmt.Println(len(words))
@@ -172,7 +172,7 @@ func FetchAcehIndoDictionary() []vocabulary.VocabularyInput {
 		}
 
 		doc.Find("tbody").Each(func(i int, s *goquery.Selection) {
-			row := vocabulary.VocabularyInput{}
+			row := dictionary.DictionaryInput{}
 			var aceh []string
 			var indo string
 

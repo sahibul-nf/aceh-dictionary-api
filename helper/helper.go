@@ -1,5 +1,7 @@
 package helper
 
+import "net/http"
+
 type Meta struct {
 	Message string `json:"message"`
 	Code    int    `json:"code"`
@@ -11,11 +13,11 @@ type Response struct {
 	Data interface{} `json:"data"`
 }
 
-func APIResponse(status string, message string, code int, data interface{}) Response {
+func APIResponse(message string, code int, data interface{}) Response {
 	meta := Meta{
 		Message: message,
 		Code:    code,
-		Status:  status,
+		Status:  http.StatusText(code),
 	}
 
 	response := Response{

@@ -1,4 +1,4 @@
-package advice
+package search
 
 import (
 	"sort"
@@ -7,7 +7,7 @@ import (
 )
 
 type Service interface {
-	GetAdvices(query string) ([]Advice, error)
+	GetRecommendation(query string) ([]Advice, error)
 }
 
 type service struct {
@@ -18,7 +18,7 @@ func NewService(r Repository) *service {
 	return &service{r}
 }
 
-func (s *service) GetAdvices(query string) ([]Advice, error) {
+func (s *service) GetRecommendation(query string) ([]Advice, error) {
 
 	advices := []Advice{}
 

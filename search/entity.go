@@ -1,4 +1,4 @@
-package advice
+package search
 
 type Advice struct {
 	ID          int     `json:"id"`
