@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type Repository interface {
@@ -24,6 +25,9 @@ func (r *repository) GetPhotoByKeyword(keyword string, count int, orientation st
 
 	// http client to call unsplash api
 	client := http.Client{}
+
+	// handle white space in keyword with %20
+	keyword = strings.ReplaceAll(keyword, " ", "%20")
 
 	// request to unsplash api
 	url := fmt.Sprintf("https://api.unsplash.com/photos/random?query=%s&count=%d&orientation=%s&client_id=%s", keyword, count, orientation, accessKey)
@@ -47,6 +51,10 @@ func (r *repository) GetPhotoByKeyword(keyword string, count int, orientation st
 	}
 
 	if res.StatusCode != 200 {
+		if res.StatusCode == 404 {
+			return UnsplashResponse{}, fmt.Errorf("keyword not found")
+		}
+
 		return UnsplashResponse{}, fmt.Errorf("error: %s", resData)
 	}
 

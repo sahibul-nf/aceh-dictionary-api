@@ -46,7 +46,7 @@ func (h *dictionaryHandler) GetWords(c *gin.Context) {
 
 	dictionaries, err := h.service.GetWords()
 	if err != nil {
-		errors := err
+		errors := err.Error()
 
 		response := helper.APIResponse("Failed to get all word", http.StatusInternalServerError, dictionaries, errors)
 		c.JSON(http.StatusInternalServerError, response)

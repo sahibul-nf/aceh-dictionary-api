@@ -2,7 +2,6 @@ package dictionary
 
 import (
 	"aceh-dictionary-api/unsplash"
-	"log"
 	"strings"
 )
 
@@ -45,7 +44,21 @@ func (s *service) GetWords() (DictionariesFormatter, error) {
 
 	dictionariesFormatter = FormatDictionariesWithTotal(dictionaries)
 
-	// TODO: add unsplash image
+	// ! handle unsplash image
+	// for _, word := range dictionariesFormatter.Words {
+	// 	wordSearchImage := strings.Split(word.English, ",")[0]
+	// 	image, err := s.unsplashRepo.GetPhotoByKeyword(wordSearchImage, 1, "squarish")
+	// 	if err != nil {
+	// 		if err.Error() == "keyword not found" {
+	// 			continue
+	// 		}
+	// 		return dictionariesFormatter, err
+	// 	}
+
+	// 	if len(image) > 0 {
+	// 		word.ImagesURL = append(word.ImagesURL, image[0].Urls.Regular)
+	// 	}
+	// }
 
 	return dictionariesFormatter, nil
 }
@@ -65,8 +78,6 @@ func (s *service) GetWord(id int) (DictionaryFormatter, error) {
 	if err != nil {
 		return dictionaryFormatter, err
 	}
-
-	log.Println(len(image))
 
 	if len(image) > 0 {
 		for _, i := range image {
