@@ -1,17 +1,24 @@
 package dictionary
 
+import (
+	"aceh-dictionary-api/unsplash"
+	"log"
+	"strings"
+)
+
 type Service interface {
 	SaveWord(input DictionaryInput) (Dictionary, error)
-	GetWords() ([]Dictionary, error)
-	GetWord(id int) (Dictionary, error)
+	GetWords() (DictionariesFormatter, error)
+	GetWord(id int) (DictionaryFormatter, error)
 }
 
 type service struct {
-	repo Repository
+	repo         Repository
+	unsplashRepo unsplash.Repository
 }
 
-func NewService(r Repository) *service {
-	return &service{r}
+func NewService(r Repository, unsplashRepo unsplash.Repository) *service {
+	return &service{r, unsplashRepo}
 }
 
 func (s *service) SaveWord(input DictionaryInput) (Dictionary, error) {
@@ -29,22 +36,43 @@ func (s *service) SaveWord(input DictionaryInput) (Dictionary, error) {
 	return newDictionary, nil
 }
 
-func (s *service) GetWords() ([]Dictionary, error) {
-
+func (s *service) GetWords() (DictionariesFormatter, error) {
+	var dictionariesFormatter DictionariesFormatter
 	dictionaries, err := s.repo.FindAll()
 	if err != nil {
-		return dictionaries, err
+		return dictionariesFormatter, err
 	}
 
-	return dictionaries, nil
+	dictionariesFormatter = FormatDictionariesWithTotal(dictionaries)
+
+	// TODO: add unsplash image
+
+	return dictionariesFormatter, nil
 }
 
-func (s *service) GetWord(id int) (Dictionary, error) {
+func (s *service) GetWord(id int) (DictionaryFormatter, error) {
+	var dictionaryFormatter DictionaryFormatter
 
 	dictionary, err := s.repo.FindByID(id)
 	if err != nil {
-		return dictionary, err
+		return dictionaryFormatter, err
 	}
 
-	return dictionary, nil
+	dictionaryFormatter = FormatDictionary(dictionary)
+
+	wordSearchImage := strings.Split(dictionary.English, ",")[0]
+	image, err := s.unsplashRepo.GetPhotoByKeyword(wordSearchImage, 3, "portrait")
+	if err != nil {
+		return dictionaryFormatter, err
+	}
+
+	log.Println(len(image))
+
+	if len(image) > 0 {
+		for _, i := range image {
+			dictionaryFormatter.ImagesURL = append(dictionaryFormatter.ImagesURL, i.Urls.Regular)
+		}
+	}
+
+	return dictionaryFormatter, nil
 }

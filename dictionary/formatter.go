@@ -1,10 +1,11 @@
 package dictionary
 
 type DictionaryFormatter struct {
-	ID        int    `json:"id"`
-	Aceh      string `json:"aceh"`
-	Indonesia string `json:"indonesia"`
-	English   string `json:"english"`
+	ID        int      `json:"id"`
+	Aceh      string   `json:"aceh"`
+	Indonesia string   `json:"indonesia"`
+	English   string   `json:"english"`
+	ImagesURL []string `json:"images_url"`
 }
 
 type DictionariesFormatter struct {

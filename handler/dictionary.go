@@ -53,9 +53,7 @@ func (h *dictionaryHandler) GetWords(c *gin.Context) {
 		return
 	}
 
-	data := dictionary.FormatDictionariesWithTotal(dictionaries)
-
-	response := helper.APIResponse("Successfully to get all word", http.StatusOK, data, nil)
+	response := helper.APIResponse("Successfully to get all word", http.StatusOK, dictionaries, nil)
 	c.JSON(http.StatusOK, response)
 }
 
@@ -80,8 +78,6 @@ func (h *dictionaryHandler) GetWord(c *gin.Context) {
 		return
 	}
 
-	data := dictionary.FormatDictionary(word)
-
-	response := helper.APIResponse("Successfully to get word detail", http.StatusOK, data, nil)
+	response := helper.APIResponse("Successfully to get word detail", http.StatusOK, word, nil)
 	c.JSON(http.StatusOK, response)
 }

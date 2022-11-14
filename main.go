@@ -6,19 +6,24 @@ import (
 	"aceh-dictionary-api/dictionary"
 	"aceh-dictionary-api/handler"
 	"aceh-dictionary-api/search"
+	"aceh-dictionary-api/unsplash"
 	"aceh-dictionary-api/user"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 var (
-	db               = config.SetupDatabaseConnection()
+	db = config.SetupDatabaseConnection()
+
+	unsplashRepository = unsplash.NewRepository()
+
 	searchRepository = search.NewRepository(db)
 	searchService    = search.NewService(searchRepository)
 	searchHandler    = handler.NewSearchHandler(searchService)
 
 	dictionaryRepository = dictionary.NewRepository(db)
-	dictionaryService    = dictionary.NewService(dictionaryRepository)
+	dictionaryService    = dictionary.NewService(dictionaryRepository, unsplashRepository)
 	dictionaryHandler    = handler.NewDictionaryHandler(dictionaryService)
 
 	userRepository = user.NewRepository(db)
@@ -28,6 +33,11 @@ var (
 )
 
 func main() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		panic(err)
+	}
+
 	defer config.CloseDatabaseConnection(db)
 
 	server := gin.Default()
