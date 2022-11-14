@@ -1,8 +1,9 @@
 package dictionary
 
 type Service interface {
-	SaveData(input DictionaryInput) (Dictionary, error)
-	GetAllData() ([]Dictionary, error)
+	SaveWord(input DictionaryInput) (Dictionary, error)
+	GetWords() ([]Dictionary, error)
+	GetWord(id int) (Dictionary, error)
 }
 
 type service struct {
@@ -13,7 +14,7 @@ func NewService(r Repository) *service {
 	return &service{r}
 }
 
-func (s *service) SaveData(input DictionaryInput) (Dictionary, error) {
+func (s *service) SaveWord(input DictionaryInput) (Dictionary, error) {
 
 	var dictionary Dictionary
 	dictionary.Aceh = input.Aceh
@@ -28,7 +29,7 @@ func (s *service) SaveData(input DictionaryInput) (Dictionary, error) {
 	return newDictionary, nil
 }
 
-func (s *service) GetAllData() ([]Dictionary, error) {
+func (s *service) GetWords() ([]Dictionary, error) {
 
 	dictionaries, err := s.repo.FindAll()
 	if err != nil {
@@ -36,4 +37,14 @@ func (s *service) GetAllData() ([]Dictionary, error) {
 	}
 
 	return dictionaries, nil
+}
+
+func (s *service) GetWord(id int) (Dictionary, error) {
+
+	dictionary, err := s.repo.FindByID(id)
+	if err != nil {
+		return dictionary, err
+	}
+
+	return dictionary, nil
 }

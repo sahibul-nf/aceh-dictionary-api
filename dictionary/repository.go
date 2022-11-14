@@ -5,6 +5,7 @@ import "gorm.io/gorm"
 type Repository interface {
 	Save(dictionary Dictionary) (Dictionary, error)
 	FindAll() ([]Dictionary, error)
+	FindByID(id int) (Dictionary, error)
 }
 
 type repository struct {
@@ -34,4 +35,15 @@ func (r *repository) FindAll() ([]Dictionary, error) {
 	}
 
 	return dictionaries, nil
+}
+
+func (r *repository) FindByID(id int) (Dictionary, error) {
+	var dictionary Dictionary
+
+	err := r.db.Where("id = ?", id).Find(&dictionary).Error
+	if err != nil {
+		return dictionary, err
+	}
+
+	return dictionary, nil
 }

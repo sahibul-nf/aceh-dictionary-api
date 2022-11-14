@@ -7,6 +7,11 @@ type DictionaryFormatter struct {
 	English   string `json:"english"`
 }
 
+type DictionariesFormatter struct {
+	TotalData int                   `json:"total_data"`
+	Words     []DictionaryFormatter `json:"words"`
+}
+
 func FormatDictionary(dictionary Dictionary) DictionaryFormatter {
 	formatter := DictionaryFormatter{}
 	formatter.ID = dictionary.ID
@@ -26,6 +31,14 @@ func FormatDictionaries(dictionaries []Dictionary) []DictionaryFormatter {
 	for _, dictionary := range dictionaries {
 		formatter = append(formatter, FormatDictionary(dictionary))
 	}
+
+	return formatter
+}
+
+func FormatDictionariesWithTotal(dictionaries []Dictionary) DictionariesFormatter {
+	formatter := DictionariesFormatter{}
+	formatter.TotalData = len(dictionaries)
+	formatter.Words = FormatDictionaries(dictionaries)
 
 	return formatter
 }

@@ -40,8 +40,9 @@ func main() {
 
 	dictionaryRoutes := server.Group("api/v1")
 	{
-		dictionaryRoutes.POST("/dictionaries", dictionaryHandler.AddNewDictionary)
-		dictionaryRoutes.GET("/dictionaries", dictionaryHandler.GetDictionaries)
+		dictionaryRoutes.POST("/dictionaries", dictionaryHandler.AddNewWord)
+		dictionaryRoutes.GET("/dictionaries", dictionaryHandler.GetWords)
+		dictionaryRoutes.GET("/dictionaries/:id", dictionaryHandler.GetWord)
 	}
 
 	userRoutes := server.Group("api/v1")
