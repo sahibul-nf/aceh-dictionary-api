@@ -17,7 +17,7 @@ func NewBookmarkHandler(service bookmark.Service) *bookmarkHandler {
 	return &bookmarkHandler{service}
 }
 
-func (h *bookmarkHandler) AddBookmark(c *gin.Context) {
+func (h *bookmarkHandler) MarkedAndUnmarkedWord(c *gin.Context) {
 	var input bookmark.MarkWordInput
 
 	err := c.ShouldBindJSON(&input)
@@ -33,13 +33,35 @@ func (h *bookmarkHandler) AddBookmark(c *gin.Context) {
 	currentUser := c.MustGet("currentUser").(user.User)
 	input.User = currentUser
 
-	bookmark, err := h.service.MarkWord(input)
+	// check if user already bookmarked the word
+	isMarked, err := h.service.FindByUserIDAndDictionaryID(input.User.ID, input.DictionaryID)
 	if err != nil {
-		response := helper.APIResponse("Failed to mark word", http.StatusInternalServerError, nil, err)
+		response := helper.APIResponse("Failed to mark word", http.StatusInternalServerError, nil, err.Error())
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
-	response := helper.APIResponse("Successfully to mark word", http.StatusOK, bookmark, nil)
+	if isMarked {
+		// if user already bookmarked the word, then unmark it
+		err = h.service.UnmarkWord(input)
+		if err != nil {
+			response := helper.APIResponse("Failed to unmark word", http.StatusInternalServerError, nil, err.Error())
+			c.JSON(http.StatusInternalServerError, response)
+			return
+		}
+
+		response := helper.APIResponse("Successfully to unmark word", http.StatusOK, nil, nil)
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	newBookmark, err := h.service.MarkWord(input)
+	if err != nil {
+		response := helper.APIResponse("Failed to mark word", http.StatusInternalServerError, nil, err.Error())
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	response := helper.APIResponse("Successfully to mark word", http.StatusOK, newBookmark, nil)
 	c.JSON(http.StatusOK, response)
 }

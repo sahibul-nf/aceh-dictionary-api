@@ -2,6 +2,8 @@ package bookmark
 
 type Service interface {
 	MarkWord(input MarkWordInput) (Bookmark, error)
+	UnmarkWord(input MarkWordInput) error
+	FindByUserIDAndDictionaryID(userID int, dictionaryID int) (bool, error)
 }
 
 type service struct {
@@ -13,15 +15,41 @@ func NewService(repository Repository) *service {
 }
 
 func (s *service) MarkWord(input MarkWordInput) (Bookmark, error) {
-	bookmark := Bookmark{
+	bookmarkInput := Bookmark{
 		UserID:       input.User.ID,
 		DictionaryID: input.DictionaryID,
 	}
 
-	bookmark, err := s.repository.Save(bookmark)
+	newBookmark, err := s.repository.Save(bookmarkInput)
 	if err != nil {
-		return bookmark, err
+		return newBookmark, err
 	}
 
-	return bookmark, nil
+	return newBookmark, nil
+}
+
+func (s *service) UnmarkWord(input MarkWordInput) error {
+	err := s.repository.DeleteByUserIDAndDictionaryID(input.User.ID, input.DictionaryID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *service) FindByUserIDAndDictionaryID(userID int, dictionaryID int) (bool, error) {
+	finding := false
+
+	markedWord, err := s.repository.FindByUserIDAndDictionaryID(userID, dictionaryID)
+	if err != nil {
+		return finding, err
+	}
+
+	if markedWord.DictionaryID != dictionaryID {
+		return finding, nil
+	}
+
+	finding = true
+
+	return finding, nil
 }
