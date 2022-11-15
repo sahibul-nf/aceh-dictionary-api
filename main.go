@@ -2,9 +2,11 @@ package main
 
 import (
 	"aceh-dictionary-api/auth"
+	"aceh-dictionary-api/bookmark"
 	"aceh-dictionary-api/config"
 	"aceh-dictionary-api/dictionary"
 	"aceh-dictionary-api/handler"
+	"aceh-dictionary-api/handler/middleware"
 	"aceh-dictionary-api/search"
 	"aceh-dictionary-api/unsplash"
 	"aceh-dictionary-api/user"
@@ -30,6 +32,10 @@ var (
 	userService    = user.NewService(userRepository)
 	authService    = auth.NewService()
 	userHandler    = handler.NewUserHandler(userService, authService)
+
+	bookmarkRepository = bookmark.NewRepository(db)
+	bookmarkService    = bookmark.NewService(bookmarkRepository)
+	bookmarkHandler    = handler.NewBookmarkHandler(bookmarkService)
 )
 
 func main() {
@@ -41,7 +47,7 @@ func main() {
 	defer config.CloseDatabaseConnection(db)
 
 	server := gin.Default()
-	server.Use(CORSMiddleware())
+	server.Use(middleware.CORSMiddleware())
 
 	searchRoutes := server.Group("api/v1")
 	{
@@ -61,27 +67,11 @@ func main() {
 		userRoutes.POST("/users/sessions", userHandler.Login)
 	}
 
+	bookmarkRoutes := server.Group("api/v1")
+	{
+		bookmarkRoutes.POST("/bookmarks", middleware.AuthMiddleware(authService, userService), bookmarkHandler.AddBookmark)
+	}
+
 	server.GET("/", handler.Index)
 	server.Run()
-}
-
-func CORSMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-
-		c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("Access-Control-Allow-Headers", "*")
-		/*
-		   c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		   c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		   c.Writer.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
-		   c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH")
-		*/
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-
-		c.Next()
-	}
 }

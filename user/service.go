@@ -6,6 +6,7 @@ type Service interface {
 	RegisterUser(input RegisterUserInput) (User, error)
 	LoginUser(input LoginUserInput) (User, error)
 	IsEmailAvailable(input CheckEmailInput) (bool, error)
+	GetUserByID(userID int) (User, error)
 }
 
 type service struct {
@@ -65,4 +66,13 @@ func (s *service) IsEmailAvailable(input CheckEmailInput) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (s *service) GetUserByID(userID int) (User, error) {
+	user, err := s.repo.FindByID(userID)
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
 }
