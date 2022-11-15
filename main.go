@@ -58,6 +58,7 @@ func main() {
 	userRoutes := server.Group("api/v1")
 	{
 		userRoutes.POST("/users", userHandler.RegisterUser)
+		userRoutes.POST("/users/sessions", userHandler.Login)
 	}
 
 	server.GET("/", handler.Index)
