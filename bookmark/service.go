@@ -7,6 +7,7 @@ type Service interface {
 	FindByUserIDAndDictionaryID(userID int, dictionaryID int) (Bookmark, error)
 	FindByUserID(userID int) ([]Bookmark, error)
 	DeleteBookmarkItemByUserID(ID int, userID int) error
+	DeleteAllBookmarkByUserID(userID int) error
 }
 
 type service struct {
@@ -69,6 +70,15 @@ func (s *service) FindByUserID(userID int) ([]Bookmark, error) {
 
 func (s *service) DeleteBookmarkItemByUserID(ID int, userID int) error {
 	err := s.repository.DeleteByIDAndUserID(ID, userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *service) DeleteAllBookmarkByUserID(userID int) error {
+	err := s.repository.DeleteByUserID(userID)
 	if err != nil {
 		return err
 	}

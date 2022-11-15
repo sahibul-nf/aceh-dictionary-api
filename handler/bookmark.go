@@ -153,3 +153,18 @@ func (h *bookmarkHandler) DeleteMarkedWord(c *gin.Context) {
 	response := helper.APIResponse("Successfully to delete marked word", http.StatusOK, nil, nil)
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *bookmarkHandler) DeleteAllMarkedWordsByUserID(c *gin.Context) {
+	// Get user id from token
+	currentUser := c.MustGet("currentUser").(user.User)
+
+	err := h.service.DeleteAllBookmarkByUserID(currentUser.ID)
+	if err != nil {
+		response := helper.APIResponse("Failed to delete all marked words", http.StatusInternalServerError, nil, err.Error())
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	response := helper.APIResponse("Successfully to delete all marked words", http.StatusOK, nil, nil)
+	c.JSON(http.StatusOK, response)
+}
