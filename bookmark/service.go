@@ -3,8 +3,10 @@ package bookmark
 type Service interface {
 	MarkWord(input MarkWordInput) (Bookmark, error)
 	UnmarkWord(input MarkWordInput) error
+	FindByID(ID int) (Bookmark, error)
 	FindByUserIDAndDictionaryID(userID int, dictionaryID int) (Bookmark, error)
 	FindByUserID(userID int) ([]Bookmark, error)
+	DeleteBookmarkItemByUserID(ID int, userID int) error
 }
 
 type service struct {
@@ -38,6 +40,15 @@ func (s *service) UnmarkWord(input MarkWordInput) error {
 	return nil
 }
 
+func (s *service) FindByID(ID int) (Bookmark, error) {
+	bookmark, err := s.repository.FindByID(ID)
+	if err != nil {
+		return bookmark, err
+	}
+
+	return bookmark, nil
+}
+
 func (s *service) FindByUserIDAndDictionaryID(userID int, dictionaryID int) (Bookmark, error) {
 	markedWord, err := s.repository.FindByUserIDAndDictionaryID(userID, dictionaryID)
 	if err != nil {
@@ -54,4 +65,13 @@ func (s *service) FindByUserID(userID int) ([]Bookmark, error) {
 	}
 
 	return markedWords, nil
+}
+
+func (s *service) DeleteBookmarkItemByUserID(ID int, userID int) error {
+	err := s.repository.DeleteByIDAndUserID(ID, userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

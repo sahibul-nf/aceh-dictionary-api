@@ -7,7 +7,7 @@ type Repository interface {
 	FindByID(ID int) (Bookmark, error)
 	FindByUserID(userID int) ([]Bookmark, error)
 	FindByUserIDAndDictionaryID(userID int, dictionaryID int) (Bookmark, error)
-	Delete(bookmark Bookmark) error
+	DeleteByIDAndUserID(ID int, userID int) error
 	DeleteByUserIDAndDictionaryID(userID int, dictionaryID int) error
 }
 
@@ -51,8 +51,10 @@ func (r *repository) FindByUserID(userID int) ([]Bookmark, error) {
 	return bookmarks, nil
 }
 
-func (r *repository) Delete(bookmark Bookmark) error {
-	err := r.db.Delete(&bookmark).Error
+func (r *repository) DeleteByIDAndUserID(ID int, userID int) error {
+	var bookmark Bookmark
+
+	err := r.db.Where("id = ? AND user_id = ?", ID, userID).Delete(&bookmark).Error
 	if err != nil {
 		return err
 	}

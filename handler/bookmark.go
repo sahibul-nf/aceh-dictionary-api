@@ -5,6 +5,7 @@ import (
 	"aceh-dictionary-api/helper"
 	"aceh-dictionary-api/user"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -113,5 +114,42 @@ func (h *bookmarkHandler) GetMarkedWordsByUserID(c *gin.Context) {
 	}
 
 	response := helper.APIResponse("Successfully to get marked words", http.StatusOK, markedWords, nil)
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *bookmarkHandler) DeleteMarkedWord(c *gin.Context) {
+	param := c.Param("id")
+	id, _ := strconv.Atoi(param)
+
+	// Get user id from token
+	currentUser := c.MustGet("currentUser").(user.User)
+
+	bookmark, err := h.service.FindByID(id)
+	if err != nil {
+		response := helper.APIResponse("Failed to delete marked word", http.StatusInternalServerError, nil, err.Error())
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	if bookmark.ID == 0 {
+		response := helper.APIResponse("Failed to delete marked word", http.StatusNotFound, nil, "Marked word not found")
+		c.JSON(http.StatusNotFound, response)
+		return
+	}
+
+	if bookmark.UserID != currentUser.ID {
+		response := helper.APIResponse("Failed to delete marked word", http.StatusForbidden, nil, "You are not allowed to delete this marked word, because you are not the owner")
+		c.JSON(http.StatusForbidden, response)
+		return
+	}
+
+	err = h.service.DeleteBookmarkItemByUserID(id, currentUser.ID)
+	if err != nil {
+		response := helper.APIResponse("Failed to delete marked word", http.StatusInternalServerError, nil, err.Error())
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	response := helper.APIResponse("Successfully to delete marked word", http.StatusOK, nil, nil)
 	c.JSON(http.StatusOK, response)
 }

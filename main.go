@@ -72,6 +72,7 @@ func main() {
 		bookmarkRoutes.POST("/bookmarks", middleware.AuthMiddleware(authService, userService), bookmarkHandler.MarkedAndUnmarkedWord)
 		bookmarkRoutes.GET("/bookmarks", middleware.AuthMiddleware(authService, userService), bookmarkHandler.GetMarkedWordsByUserID)
 		bookmarkRoutes.GET("/bookmark", middleware.AuthMiddleware(authService, userService), bookmarkHandler.GetMarkedWords)
+		bookmarkRoutes.DELETE("/bookmarks/:id", middleware.AuthMiddleware(authService, userService), bookmarkHandler.DeleteMarkedWord)
 	}
 
 	server.GET("/", handler.Index)
