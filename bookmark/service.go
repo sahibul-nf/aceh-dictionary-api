@@ -3,7 +3,7 @@ package bookmark
 type Service interface {
 	MarkWord(input MarkWordInput) (Bookmark, error)
 	UnmarkWord(input MarkWordInput) error
-	FindByUserIDAndDictionaryID(userID int, dictionaryID int) (bool, error)
+	FindByUserIDAndDictionaryID(userID int, dictionaryID int) (Bookmark, error)
 }
 
 type service struct {
@@ -37,19 +37,11 @@ func (s *service) UnmarkWord(input MarkWordInput) error {
 	return nil
 }
 
-func (s *service) FindByUserIDAndDictionaryID(userID int, dictionaryID int) (bool, error) {
-	finding := false
-
+func (s *service) FindByUserIDAndDictionaryID(userID int, dictionaryID int) (Bookmark, error) {
 	markedWord, err := s.repository.FindByUserIDAndDictionaryID(userID, dictionaryID)
 	if err != nil {
-		return finding, err
+		return markedWord, err
 	}
 
-	if markedWord.DictionaryID != dictionaryID {
-		return finding, nil
-	}
-
-	finding = true
-
-	return finding, nil
+	return markedWord, nil
 }
