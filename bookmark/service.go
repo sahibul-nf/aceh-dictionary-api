@@ -4,6 +4,7 @@ type Service interface {
 	MarkWord(input MarkWordInput) (Bookmark, error)
 	UnmarkWord(input MarkWordInput) error
 	FindByUserIDAndDictionaryID(userID int, dictionaryID int) (Bookmark, error)
+	FindByUserID(userID int) ([]Bookmark, error)
 }
 
 type service struct {
@@ -44,4 +45,13 @@ func (s *service) FindByUserIDAndDictionaryID(userID int, dictionaryID int) (Boo
 	}
 
 	return markedWord, nil
+}
+
+func (s *service) FindByUserID(userID int) ([]Bookmark, error) {
+	markedWords, err := s.repository.FindByUserID(userID)
+	if err != nil {
+		return markedWords, err
+	}
+
+	return markedWords, nil
 }

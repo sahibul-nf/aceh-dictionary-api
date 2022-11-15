@@ -70,7 +70,8 @@ func main() {
 	bookmarkRoutes := server.Group("api/v1")
 	{
 		bookmarkRoutes.POST("/bookmarks", middleware.AuthMiddleware(authService, userService), bookmarkHandler.MarkedAndUnmarkedWord)
-		bookmarkRoutes.GET("/bookmarks", middleware.AuthMiddleware(authService, userService), bookmarkHandler.GetMarkedWords)
+		bookmarkRoutes.GET("/bookmarks", middleware.AuthMiddleware(authService, userService), bookmarkHandler.GetMarkedWordsByUserID)
+		bookmarkRoutes.GET("/bookmark", middleware.AuthMiddleware(authService, userService), bookmarkHandler.GetMarkedWords)
 	}
 
 	server.GET("/", handler.Index)

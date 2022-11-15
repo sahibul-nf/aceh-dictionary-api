@@ -100,3 +100,18 @@ func (h *bookmarkHandler) GetMarkedWords(c *gin.Context) {
 	response := helper.APIResponse("Successfully to get marked word", http.StatusOK, markedWords, nil)
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *bookmarkHandler) GetMarkedWordsByUserID(c *gin.Context) {
+	// Get user id from token
+	currentUser := c.MustGet("currentUser").(user.User)
+
+	markedWords, err := h.service.FindByUserID(currentUser.ID)
+	if err != nil {
+		response := helper.APIResponse("Failed to get marked words", http.StatusInternalServerError, nil, err.Error())
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	response := helper.APIResponse("Successfully to get marked words", http.StatusOK, markedWords, nil)
+	c.JSON(http.StatusOK, response)
+}
