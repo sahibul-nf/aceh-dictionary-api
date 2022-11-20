@@ -12,7 +12,6 @@ import (
 	"aceh-dictionary-api/user"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
 var (
@@ -39,10 +38,11 @@ var (
 )
 
 func main() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		panic(err)
-	}
+	// ! Comment this line if you wanna deploy to Heroku
+	// err := godotenv.Load(".env")
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	defer config.CloseDatabaseConnection(db)
 
