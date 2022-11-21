@@ -9,6 +9,7 @@ import (
 
 type Repository interface {
 	FindLike(query string) ([]dictionary.Dictionary, error)
+	FindAll() ([]dictionary.Dictionary, error)
 }
 
 type repository struct {
@@ -23,6 +24,17 @@ func (r *repository) FindLike(query string) ([]dictionary.Dictionary, error) {
 	var dictionary []dictionary.Dictionary
 
 	err := r.db.Where("aceh LIKE ?", "%"+strings.TrimSpace(query)+"%").Find(&dictionary).Error
+	if err != nil {
+		return dictionary, err
+	}
+
+	return dictionary, nil
+}
+
+func (r *repository) FindAll() ([]dictionary.Dictionary, error) {
+	var dictionary []dictionary.Dictionary
+
+	err := r.db.Find(&dictionary).Error
 	if err != nil {
 		return dictionary, err
 	}

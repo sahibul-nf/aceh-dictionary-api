@@ -22,7 +22,7 @@ func (s *service) GetRecommendationWords(query string) ([]RecommendationWord, er
 
 	recommendationWords := []RecommendationWord{}
 
-	dictionaries, err := s.repository.FindLike(query)
+	dictionaries, err := s.repository.FindAll()
 	if err != nil {
 		return recommendationWords, err
 	}
