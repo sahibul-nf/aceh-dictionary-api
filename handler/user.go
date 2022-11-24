@@ -74,3 +74,20 @@ func (h *userHandler) Login(c *gin.Context) {
 	response := helper.APIResponse("Successfully to login", http.StatusOK, formatter, nil)
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *userHandler) GetUserInfo(c *gin.Context) {
+	currentUser := c.MustGet("currentUser").(user.User)
+	userID := currentUser.ID
+
+	authUser, err := h.userService.GetUserByID(userID)
+	if err != nil {
+		response := helper.APIResponse("Failed to get user", http.StatusInternalServerError, nil, err)
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	formatter := user.FormatUser(authUser, "")
+
+	response := helper.APIResponse("Successfully to get user", http.StatusOK, formatter, nil)
+	c.JSON(http.StatusOK, response)
+}

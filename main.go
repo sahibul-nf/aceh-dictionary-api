@@ -65,6 +65,7 @@ func main() {
 	{
 		userRoutes.POST("/users", userHandler.RegisterUser)
 		userRoutes.POST("/users/sessions", userHandler.Login)
+		userRoutes.GET("/users", middleware.AuthMiddleware(authService, userService), userHandler.GetUserInfo)
 	}
 
 	bookmarkRoutes := server.Group("api/v1")
