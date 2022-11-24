@@ -70,22 +70,14 @@ func (h *bookmarkHandler) MarkedAndUnmarkedWord(c *gin.Context) {
 }
 
 func (h *bookmarkHandler) GetMarkedWords(c *gin.Context) {
-	var input bookmark.MarkWordInput
-
-	err := c.ShouldBindJSON(&input)
-	if err != nil {
-		errors := helper.ErrorValidationFormat(err)
-
-		response := helper.APIResponse("Failed to get marked word", http.StatusBadRequest, nil, errors)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
+	param := c.Query("dictionary_id")
+	dictionaryID, _ := strconv.Atoi(param)
 
 	// Get user id from token
 	currentUser := c.MustGet("currentUser").(user.User)
-	input.User = currentUser
+	userID := currentUser.ID
 
-	markedWords, err := h.service.FindByUserIDAndDictionaryID(input.User.ID, input.DictionaryID)
+	markedWords, err := h.service.FindByUserIDAndDictionaryID(userID, dictionaryID)
 	if err != nil {
 		response := helper.APIResponse("Failed to get marked word", http.StatusInternalServerError, nil, err.Error())
 		c.JSON(http.StatusInternalServerError, response)
