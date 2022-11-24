@@ -37,7 +37,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	formatter := user.FormatUser(newUser, "")
+	formatter := user.FormatUser(newUser)
 
 	response := helper.APIResponse("Successfully to register user", http.StatusOK, formatter, nil)
 	c.JSON(http.StatusOK, response)
@@ -69,7 +69,7 @@ func (h *userHandler) Login(c *gin.Context) {
 		return
 	}
 
-	formatter := user.FormatUser(loggedInUser, token)
+	formatter := user.FormatAuthUser(token)
 
 	response := helper.APIResponse("Successfully to login", http.StatusOK, formatter, nil)
 	c.JSON(http.StatusOK, response)
@@ -86,7 +86,7 @@ func (h *userHandler) GetUserInfo(c *gin.Context) {
 		return
 	}
 
-	formatter := user.FormatUser(authUser, "")
+	formatter := user.FormatUser(authUser)
 
 	response := helper.APIResponse("Successfully to get user", http.StatusOK, formatter, nil)
 	c.JSON(http.StatusOK, response)
