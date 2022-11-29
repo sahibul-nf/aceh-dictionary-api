@@ -1,6 +1,8 @@
 package bookmark
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Repository interface {
 	Save(bookmark Bookmark) (Bookmark, error)
@@ -44,7 +46,8 @@ func (r *repository) FindByID(ID int) (Bookmark, error) {
 func (r *repository) FindByUserID(userID int) ([]Bookmark, error) {
 	var bookmarks []Bookmark
 
-	err := r.db.Where("user_id = ?", userID).Find(&bookmarks).Error
+	// find all bookmarks by user id and preload dictionary, user
+	err := r.db.Preload("Dictionary").Preload("User").Where("user_id = ?", userID).Find(&bookmarks).Error
 	if err != nil {
 		return bookmarks, err
 	}

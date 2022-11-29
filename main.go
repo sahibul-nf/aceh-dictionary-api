@@ -15,34 +15,34 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var (
-	db = config.SetupDatabaseConnection()
-
-	unsplashRepository = unsplash.NewRepository()
-
-	searchRepository = search.NewRepository(db)
-	searchService    = search.NewService(searchRepository)
-	searchHandler    = handler.NewSearchHandler(searchService)
-
-	dictionaryRepository = dictionary.NewRepository(db)
-	dictionaryService    = dictionary.NewService(dictionaryRepository, unsplashRepository)
-	dictionaryHandler    = handler.NewDictionaryHandler(dictionaryService)
-
-	userRepository = user.NewRepository(db)
-	userService    = user.NewService(userRepository)
-	authService    = auth.NewService()
-	userHandler    = handler.NewUserHandler(userService, authService)
-
-	bookmarkRepository = bookmark.NewRepository(db)
-	bookmarkService    = bookmark.NewService(bookmarkRepository)
-	bookmarkHandler    = handler.NewBookmarkHandler(bookmarkService)
-)
+var ()
 
 func main() {
-	err := godotenv.Load(".env")
+	err := godotenv.Load()
 	if err != nil {
 		panic(err)
 	}
+
+	db := config.SetupDatabaseConnection()
+
+	unsplashRepository := unsplash.NewRepository()
+
+	searchRepository := search.NewRepository(db)
+	searchService := search.NewService(searchRepository)
+	searchHandler := handler.NewSearchHandler(searchService)
+
+	dictionaryRepository := dictionary.NewRepository(db)
+	dictionaryService := dictionary.NewService(dictionaryRepository, unsplashRepository)
+	dictionaryHandler := handler.NewDictionaryHandler(dictionaryService)
+
+	userRepository := user.NewRepository(db)
+	userService := user.NewService(userRepository)
+	authService := auth.NewService()
+	userHandler := handler.NewUserHandler(userService, authService)
+
+	bookmarkRepository := bookmark.NewRepository(db)
+	bookmarkService := bookmark.NewService(bookmarkRepository)
+	bookmarkHandler := handler.NewBookmarkHandler(bookmarkService)
 
 	defer config.CloseDatabaseConnection(db)
 
@@ -71,8 +71,8 @@ func main() {
 	bookmarkRoutes := server.Group("api/v1")
 	{
 		bookmarkRoutes.POST("/bookmarks", middleware.AuthMiddleware(authService, userService), bookmarkHandler.MarkedAndUnmarkedWord)
-		bookmarkRoutes.GET("/bookmarks", middleware.AuthMiddleware(authService, userService), bookmarkHandler.GetMarkedWordsByUserID)
-		bookmarkRoutes.GET("/bookmark", middleware.AuthMiddleware(authService, userService), bookmarkHandler.GetMarkedWords)
+		bookmarkRoutes.GET("/bookmarks", middleware.AuthMiddleware(authService, userService), bookmarkHandler.GetAllBookmarks)
+		bookmarkRoutes.GET("/bookmark", middleware.AuthMiddleware(authService, userService), bookmarkHandler.GetMarkedWord)
 		bookmarkRoutes.DELETE("/bookmarks/:id", middleware.AuthMiddleware(authService, userService), bookmarkHandler.DeleteMarkedWord)
 		bookmarkRoutes.DELETE("/bookmarks", middleware.AuthMiddleware(authService, userService), bookmarkHandler.DeleteAllMarkedWordsByUserID)
 	}
