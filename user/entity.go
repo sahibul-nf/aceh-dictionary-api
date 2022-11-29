@@ -8,7 +8,6 @@ type User struct {
 	Email        string    `gorm:"uniqueIndex:email;size:255"`
 	PasswordHash string    `gorm:"column:password_hash;size:255"`
 	AvatarURL    string    `gorm:"column:avatar_url;size:255"`
-	Token        string    `gorm:"column:token;size:255"`
 	CreatedAt    time.Time `gorm:"column:created_at;type:timestamp"`
 	UpdatedAt    time.Time `gorm:"column:updated_at;type:timestamp"`
 }

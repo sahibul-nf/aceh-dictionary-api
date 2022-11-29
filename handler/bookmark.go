@@ -65,11 +65,13 @@ func (h *bookmarkHandler) MarkedAndUnmarkedWord(c *gin.Context) {
 		return
 	}
 
-	response := helper.APIResponse("Successfully to mark word", http.StatusOK, newBookmark, nil)
+	formatBookmark := bookmark.FormatBookmark(newBookmark)
+
+	response := helper.APIResponse("Successfully to mark word", http.StatusOK, formatBookmark, nil)
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *bookmarkHandler) GetMarkedWords(c *gin.Context) {
+func (h *bookmarkHandler) GetMarkedWord(c *gin.Context) {
 	param := c.Query("dictionary_id")
 	dictionaryID, _ := strconv.Atoi(param)
 
@@ -90,22 +92,26 @@ func (h *bookmarkHandler) GetMarkedWords(c *gin.Context) {
 		return
 	}
 
-	response := helper.APIResponse("Successfully to get marked word", http.StatusOK, markedWords, nil)
+	formatMarkedWord := bookmark.FormatBookmark(markedWords)
+
+	response := helper.APIResponse("Successfully to get marked word", http.StatusOK, formatMarkedWord, nil)
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *bookmarkHandler) GetMarkedWordsByUserID(c *gin.Context) {
+func (h *bookmarkHandler) GetAllBookmarks(c *gin.Context) {
 	// Get user id from token
 	currentUser := c.MustGet("currentUser").(user.User)
 
-	markedWords, err := h.service.FindByUserID(currentUser.ID)
+	bookmarks, err := h.service.FindByUserID(currentUser.ID)
 	if err != nil {
 		response := helper.APIResponse("Failed to get marked words", http.StatusInternalServerError, nil, err.Error())
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
-	response := helper.APIResponse("Successfully to get marked words", http.StatusOK, markedWords, nil)
+	formatBookmarks := bookmark.FormatBookmarks(bookmarks)
+
+	response := helper.APIResponse("Successfully to get marked words", http.StatusOK, formatBookmarks, nil)
 	c.JSON(http.StatusOK, response)
 }
 

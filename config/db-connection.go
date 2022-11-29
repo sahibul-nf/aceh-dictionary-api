@@ -1,9 +1,6 @@
 package config
 
 import (
-	"aceh-dictionary-api/bookmark"
-	"aceh-dictionary-api/dictionary"
-	"aceh-dictionary-api/user"
 	"fmt"
 	"os"
 
@@ -23,15 +20,16 @@ func SetupDatabaseConnection() *gorm.DB {
 	// db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 	// 	DisableForeignKeyConstraintWhenMigrating: true,
 	// })
+
 	// Postgres
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=require TimeZone=Asia/Shanghai", dbHost, dbUser, dbPass, dbName, dbPort)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", dbHost, dbUser, dbPass, dbName, dbPort)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		panic("Failed to create a connection to database")
 	}
 
-	db.AutoMigrate(&dictionary.Dictionary{}, &user.User{}, &bookmark.Bookmark{})
+	// db.AutoMigrate(&user.User{}, &dictionary.Dictionary{}, &bookmark.Bookmark{})
 	fmt.Println("Database connected!")
 
 	return db
