@@ -21,8 +21,9 @@ func NewSearchHandler(adviceService search.Service) *searchHandler {
 func (h *searchHandler) Search(c *gin.Context) {
 
 	input := c.Query("q")
+	algorithm := c.Query("algorithm")
 
-	recommendationList, err := h.service.GetRecommendationWords(input)
+	recommendationList, err := h.service.GetRecommendationWords(input, algorithm)
 	if err != nil {
 		errors := err
 

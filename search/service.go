@@ -3,11 +3,12 @@ package search
 import (
 	"sort"
 
+	"github.com/agext/levenshtein"
 	jwd "github.com/jhvst/go-jaro-winkler-distance"
 )
 
 type Service interface {
-	GetRecommendationWords(query string) ([]RecommendationWord, error)
+	GetRecommendationWords(query string, algorithm string) ([]RecommendationWord, error)
 }
 
 type service struct {
@@ -18,7 +19,7 @@ func NewService(r Repository) *service {
 	return &service{r}
 }
 
-func (s *service) GetRecommendationWords(query string) ([]RecommendationWord, error) {
+func (s *service) GetRecommendationWords(query string, algorithm string) ([]RecommendationWord, error) {
 
 	recommendationWords := []RecommendationWord{}
 
@@ -28,7 +29,16 @@ func (s *service) GetRecommendationWords(query string) ([]RecommendationWord, er
 	}
 
 	for _, v := range dictionaries {
-		result := jwd.Calculate(query, v.Aceh)
+		var result float64
+
+		if algorithm == "jwd" { // jaro winkler distance
+			result = jwd.Calculate(query, v.Aceh)
+		}
+
+		if algorithm == "lev" { // levenshtein distance
+			result = levenshtein.Match(query, v.Aceh, nil)
+		}
+
 		if result >= 0.75 {
 			recommendationWords = append(recommendationWords, RecommendationWord{
 				ID:          v.ID,
