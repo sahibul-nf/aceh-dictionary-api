@@ -1,0 +1,21 @@
+@startuml Splash Screen
+' Auth Check Proses
+skinparam ActivityBackgroundColor FFEDB6
+
+|User|
+start
+:Open App;
+
+|App|
+:Check If User is Logged In;
+if (User is Logged In) then (yes)
+    :Set User Status to Logged In;
+else (no)
+    :Set User Status to Logged Out;
+endif
+    :Redirect to Main Page;
+
+|User|
+:See Main Page;
+stop
+@enduml

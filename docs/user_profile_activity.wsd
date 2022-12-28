@@ -1,0 +1,21 @@
+@startuml User Profile Detail
+skinparam ActivityBackgroundColor FFEDB6
+
+' step by step flow to show the user profile detail
+|User|
+start
+:Go to user profile detail page;
+
+|App|
+:Check if user is logged in;
+if (yes) then (yes)
+  :Display user profile detail;
+else (no)
+  :Display screen with message to login;
+endif
+
+|User|
+:See user profile detail;
+
+stop
+@enduml

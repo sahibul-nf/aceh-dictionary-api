@@ -1,0 +1,24 @@
+@startuml Sign In Process
+skinparam ActivityBackgroundColor FFEDB6
+
+|User|
+start
+:Go to the Sign In page;
+:Enter the email address and password;
+:Tap the Sign In button;
+
+|App|
+:Check the user credentials;
+If (credentials are valid) then (yes)
+    :Set the user as signed in;
+    :Display success message;
+    :Redirect to the Main page;
+else (no)
+    :Display error message;
+    stop
+endif
+
+|User|
+:See success message and the Main page;
+stop
+@enduml

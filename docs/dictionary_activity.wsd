@@ -1,0 +1,38 @@
+@startuml Show All Word
+skinparam ActivityBackgroundColor FFEDB6
+
+' App shows word list on word list page
+
+|User|
+start
+:Go to word list page;
+
+|App|
+:Display word list data;
+
+|User|
+:See word list data;
+
+stop
+
+@enduml
+
+@startuml Show Word Detail
+skinparam ActivityBackgroundColor FFEDB6
+
+' App shows word detail on word detail page
+
+|User|
+start
+:Go to word list page;
+:Tap word item on word list page;
+
+|App|
+:Display word detail data;
+
+|User|
+:See word detail data;
+
+stop
+
+@enduml
