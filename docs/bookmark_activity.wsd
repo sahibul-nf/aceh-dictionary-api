@@ -1,0 +1,122 @@
+@startuml Mark & Unmark Word
+skinparam ActivityBackgroundColor FFEDB6
+
+' step by step flow to mark a word as favorite
+|User|
+start
+:Go to the word detail page;
+
+|App|
+:Check user login status;
+:Check if the word is already bookmarked;
+
+|User|
+:Tap bookmark icon button;
+
+|App|
+if (not logged in) then (not logged in)
+    :Display dialog with message \n"Please login to bookmark word";
+else (logged in)
+    if (bookmarked?) then (bookmarked)
+        :Remove the word from \nthe bookmark list;
+        :Display the bookmark icon \nbutton with empty color;
+    else (not bookmarked)
+        :Add the word to \nthe bookmark list;
+        :Display the bookmark icon \nbutton with filled color;
+    endif
+endif
+
+|User|
+if (bookmarked?) then (bookmarked)
+    :See the bookmark icon \nbutton with empty color;
+else (not bookmarked)
+    :See the bookmark icon \nbutton with filled color;
+endif
+stop
+
+@enduml
+
+@startuml Bookmark List
+skinparam ActivityBackgroundColor FFEDB6
+
+' step by step flow to view bookmark list
+|User|
+start
+:Go to the bookmark list page;
+
+|App|
+:Check user login status;
+if (not logged in) then (not logged in)
+    :Display screen with message \n"Please login to see bookmark list";
+else (logged in)
+    :Check if the user has \nbookmarked any word;
+    if (no bookmark?) then (no bookmark)
+        :Display screen with \nmessage "No bookmark";
+    else (has bookmark)
+        :Display the list of \nbookmarked words;
+    endif
+endif
+
+|User|
+if (no bookmark?) then (no bookmark)
+    :See the message \n"No bookmark";
+else (has bookmark)
+    :See the list of \nbookmarked words;
+endif
+stop
+
+@enduml
+
+@startuml Remove Bookmark Item
+skinparam ActivityBackgroundColor FFEDB6
+
+' step by step flow to remove a bookmark item
+|User|
+start
+:Go to the bookmark list page;
+
+|App|
+:Swipe left or right \non the bookmark item;
+
+|User|
+:Tap the delete icon button;
+
+|App|
+:Remove the bookmark item \nfrom the bookmark list;
+
+|User|
+:See the bookmark list \nwithout the deleted item;
+
+stop
+
+@enduml
+
+@startuml Remove All Bookmark Items
+skinparam ActivityBackgroundColor FFEDB6
+
+' step by step flow to remove all bookmark items
+|User|
+start
+:Go to the bookmark list page;
+
+|App|
+:Display bookmark list page;
+
+|User|
+:Tap the delete icon button \non the top right corner;
+
+|App|
+:Display dialog with message \n"Are you sure to delete all bookmarks?" \nand two buttons \n"Cancel" and "Delete";
+
+|User|
+:Tap "Delete" button;
+
+|App|
+:Remove all bookmark items \nfrom the bookmark list;
+
+|User|
+:See the bookmark list \nwithout any item;
+
+stop
+
+@enduml

@@ -1,0 +1,20 @@
+@startuml Search with Recommendation List 
+skinparam ActivityBackgroundColor FFEDB6
+
+' Search word with recommendation list
+|User|
+start
+
+:Go to search page;
+:Enter search word;
+
+|App|
+:Calculate search word with data in database \n             using Jarowinkler algorithm;
+:Take 5 most similar words based on the result of \n                    Jarowinkler algorithm;
+:Display the result of recommendation list;
+
+|User|
+:See result of recommendation list;
+
+stop
+@enduml
