@@ -1,0 +1,26 @@
+@startuml Sign Up Process
+' Activity Diagrams for the Sign Up Process
+skinparam ActivityBackgroundColor FFEDB6
+
+|User|
+start
+:Go to Sign Up Page;
+:Enter Name, Email Address, Password;
+:Tap Sign Up Button;
+
+|App|
+:Check if User input is valid (Name, Email Address, Password);
+:Check if Email Address is already used;
+if (Email Address is already used) then (yes)
+    :Display Error Message;
+    stop
+else (no)
+    :Create User Account;
+    :Display Success Message;
+    :Redirect to Sign In Page;
+endif
+
+|User|
+:See Success Message and Sign In Page;
+stop
+@enduml
