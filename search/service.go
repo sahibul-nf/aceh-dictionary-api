@@ -3,7 +3,7 @@ package search
 import (
 	"sort"
 
-	"github.com/agext/levenshtein"
+	"github.com/agnivade/levenshtein"
 	jwd "github.com/jhvst/go-jaro-winkler-distance"
 )
 
@@ -33,13 +33,21 @@ func (s *service) GetRecommendationWords(query string, algorithm string) ([]Reco
 
 		if algorithm == "jwd" { // jaro winkler distance
 			result = jwd.Calculate(query, v.Aceh)
+
+			recommendationWords = append(recommendationWords, RecommendationWord{
+				ID:          v.ID,
+				Aceh:        v.Aceh,
+				Indonesia:   v.Indonesia,
+				English:     v.English,
+				Similiarity: result,
+			})
 		}
 
 		if algorithm == "lev" { // levenshtein distance
-			result = levenshtein.Match(query, v.Aceh, nil)
-		}
+			lev := levenshtein.ComputeDistance(query, v.Aceh)
+			// ubah ke persentase
+			result = (float64(len(query)) - float64(lev)) / float64(len(query))
 
-		if result >= 0.75 {
 			recommendationWords = append(recommendationWords, RecommendationWord{
 				ID:          v.ID,
 				Aceh:        v.Aceh,
@@ -56,15 +64,14 @@ func (s *service) GetRecommendationWords(query string, algorithm string) ([]Reco
 
 	filters := []RecommendationWord{}
 
-	if len(recommendationWords) > 5 {
+	if len(recommendationWords) > 10 {
 		for i, v := range recommendationWords {
-			if i < 5 {
+			if i < 10 {
 				filters = append(filters, v)
 			}
 		}
 		return filters, nil
-	} else {
-		return recommendationWords, nil
 	}
 
+	return recommendationWords, nil
 }
