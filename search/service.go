@@ -1,6 +1,7 @@
 package search
 
 import (
+	"math"
 	"sort"
 
 	"github.com/agnivade/levenshtein"
@@ -45,8 +46,8 @@ func (s *service) GetRecommendationWords(query string, algorithm string) ([]Reco
 
 		if algorithm == "lev" { // levenshtein distance
 			lev := levenshtein.ComputeDistance(query, v.Aceh)
-			// ubah ke persentase
-			result = (float64(len(query)) - float64(lev)) / float64(len(query))
+			// normalisasi nilai levenshtein distance
+			result = (math.Max(float64(len(query)), float64(len(v.Aceh))) - float64(lev)) / math.Max(float64(len(query)), float64(len(v.Aceh)))
 
 			recommendationWords = append(recommendationWords, RecommendationWord{
 				ID:          v.ID,
@@ -59,6 +60,12 @@ func (s *service) GetRecommendationWords(query string, algorithm string) ([]Reco
 	}
 
 	sort.Slice(recommendationWords, func(i, j int) bool {
+		// urutkan berdasarkan nilai similarity
+		// dan jika nilai similarity sama, urutkan berdasarkan nilai alphabet
+		if recommendationWords[i].Similiarity == recommendationWords[j].Similiarity {
+			return recommendationWords[i].Aceh > recommendationWords[j].Aceh
+		}
+
 		return recommendationWords[i].Similiarity > recommendationWords[j].Similiarity
 	})
 

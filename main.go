@@ -8,6 +8,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"log"
+	"math"
 	"math/rand"
 	"os"
 	"regexp"
@@ -53,6 +54,16 @@ func main() {
 	scanner.Scan()
 	algorithm := strings.ToLower(scanner.Text())
 
+	// masukkan nilai relevansi yang ingin digunakan
+	fmt.Print("Masukkan nilai relevansi yang ingin digunakan (0.0 - 1.0): ")
+	scanner.Scan()
+	threshold, _ := strconv.ParseFloat(scanner.Text(), 64)
+
+	// masukkan metode akurasi yang ingin digunakan (map atau default)
+	fmt.Print("Masukkan metode akurasi yang ingin digunakan, default(0) atau map(1): ")
+	scanner.Scan()
+	method, _ := strconv.Atoi(scanner.Text())
+
 	// ambil data sample dari database
 	fmt.Println("Mengambil data sample dari database...")
 	samples := GetSampleData(db, re, amount)
@@ -65,25 +76,39 @@ func main() {
 		fmt.Printf("\nKeyword ke-%d: %s\n", i, v)
 
 		result, _ := searchService.GetRecommendationWords(v, algorithm)
-		order := 0
+		relList := FilterByThreshold(result, threshold)
+
+		priorityNumber := 0
 		expectedKeyword := ""
 		accuracy := Accuracy{}
 
+		if method == 1 {
+			ap := CalculateAveragePrecision(relList, len(result))
+			accuracy.ap = ap
+			accuracy.keyword = v
+		}
+
 		for i, r := range result {
-			order = i + 1
-			fmt.Printf("%d. %s = %.2f\n", order, r.Aceh, r.Similiarity)
+			priorityNumber = i + 1
+			fmt.Printf("%d. %s = %.2f\n", priorityNumber, r.Aceh, r.Similiarity)
 
 			expectedKeyword = GetExpectedResult(r.ID, expectedKeywords)
 			if expectedKeyword != "" {
-				value := AccuracyCalculation(order, len(result))
-				accuracy = Accuracy{
-					keyword:              v,
-					expected:             expectedKeyword,
-					algorithmResult:      r.Similiarity,
-					order:                order,
-					recommendationResult: value,
+				if method == 1 {
+					accuracy.expected = expectedKeyword
+					accuracy.algorithmResult = r.Similiarity
+					accuracy.priorityNumber = priorityNumber
+				} else {
+					value := AccuracyCalculation(priorityNumber, len(result))
+					accuracy = Accuracy{
+						keyword:         v,
+						expected:        expectedKeyword,
+						algorithmResult: r.Similiarity,
+						priorityNumber:  priorityNumber,
+						value:           value,
+					}
 				}
-				break
+				// break
 			}
 		}
 
@@ -92,12 +117,20 @@ func main() {
 		fmt.Println("=====================================")
 	}
 
-	finalResult := AccuracyPercentageCalculation(listOfAccuracy, len(sampleKeywords))
-	fmt.Printf("\nTotal percentage of accuracy for %d data sample using %s algorithm is %.1f%%\n", len(sampleKeywords), algorithm, finalResult.recommendationAccuracyPercent)
+	var finalResult FinalResult
+	var mapResult MAPResult
+
+	if method == 1 {
+		mapResult = CalculateMAP(listOfAccuracy)
+		fmt.Printf("\nTotal percentage of accuracy for %d data sample using %s algorithm is %.1f%%\n", len(sampleKeywords), algorithm, mapResult.percentage)
+	} else {
+		finalResult = AccuracyPercentageCalculation(listOfAccuracy, len(sampleKeywords))
+		fmt.Printf("\nTotal percentage of accuracy for %d data sample using %s algorithm is %.1f%%\n", len(sampleKeywords), algorithm, finalResult.RecommendationAccuracyPercent)
+	}
 
 	// save to csv
 	fmt.Println("\nMenyimpan data ke file csv...")
-	SaveToCSV(listOfAccuracy, algorithm, finalResult)
+	SaveToCSV(listOfAccuracy, algorithm, finalResult, mapResult, method, threshold)
 
 	fmt.Println("Selesai 🤩")
 }
@@ -171,9 +204,12 @@ func GetRandomKeywords(amount int, keywords []string) []string {
 }
 
 // masukkan hasil ke dalam file csv
-func SaveToCSV(data []Accuracy, algorithm string, finalResult FinalResult) {
+func SaveToCSV(data []Accuracy, algorithm string, finalResult FinalResult, mapResult MAPResult, method int, threshold float64) {
 	// file name
 	fileName := fmt.Sprintf("result-%s-%d.csv", algorithm, len(data))
+	if method == 1 {
+		fileName = fmt.Sprintf("result-map-%s-%d-%.1f.csv", algorithm, len(data), threshold)
+	}
 
 	// Buat file CSV
 	file, err := os.Create(fileName)
@@ -189,23 +225,49 @@ func SaveToCSV(data []Accuracy, algorithm string, finalResult FinalResult) {
 
 	// Tulis data ke file CSV
 	var rows [][]string
-	rows = append(rows, []string{"Keyword", "Expected", "Algorithm Accuracy Result", "Priority Number", "Recommendation Accuracy Result"})
+	if method == 1 {
+		rows = append(rows, []string{"Keyword", "Expected", "Algorithm Accuracy Result", "Priority Number", "Average Precision", "Precision", "Recall"})
+	} else {
+		rows = append(rows, []string{"Keyword", "Expected", "Algorithm Accuracy Result", "Priority Number", "Recommendation Accuracy Result"})
+	}
 
 	for _, v := range data {
-		row := []string{
-			v.keyword,
-			v.expected,
-			strconv.FormatFloat(v.algorithmResult, 'f', 2, 64),
-			strconv.Itoa(v.order),
-			strconv.FormatFloat(v.recommendationResult, 'f', 2, 64),
+		var row []string
+
+		if method == 1 {
+			row = []string{
+				v.keyword,
+				v.expected,
+				strconv.FormatFloat(v.algorithmResult, 'f', 2, 64),
+				strconv.Itoa(v.priorityNumber),
+				strconv.FormatFloat(v.ap.AveragePrecision, 'f', 2, 64),
+				strconv.FormatFloat(v.ap.Precision, 'f', 2, 64),
+				strconv.FormatFloat(v.ap.Recall, 'f', 2, 64),
+			}
+		} else {
+			row = []string{
+				v.keyword,
+				v.expected,
+				strconv.FormatFloat(v.algorithmResult, 'f', 2, 64),
+				strconv.Itoa(v.priorityNumber),
+				strconv.FormatFloat(v.value, 'f', 2, 64),
+			}
 		}
 		rows = append(rows, row)
 	}
 
-	// add total result
-	rows = append(rows, []string{"Total Accuracy Results:", "", strconv.FormatFloat(finalResult.algorithm, 'f', 2, 64), "", strconv.FormatFloat(finalResult.recommendation, 'f', 2, 64)})
-	// add total accuracy
-	rows = append(rows, []string{"Total Percentage Accuracy:", "", strconv.FormatFloat(finalResult.algorithmAccuracyPercent, 'f', 1, 64) + "%", "", strconv.FormatFloat(finalResult.recommendationAccuracyPercent, 'f', 1, 64) + "%"})
+	if method == 1 {
+		// add total result
+		rows = append(rows, []string{"MAP Results:", "", "", "", strconv.FormatFloat(mapResult.value, 'f', 2, 64)})
+		// add total accuracy
+		rows = append(rows, []string{"MAP Percentage Accuracy:", "", "", "", strconv.FormatFloat(mapResult.percentage, 'f', 1, 64) + "%"})
+	} else {
+		// add total result
+		rows = append(rows, []string{"Total Accuracy Results:", "", strconv.FormatFloat(finalResult.Algorithm, 'f', 2, 64), "", strconv.FormatFloat(finalResult.Recommendation, 'f', 2, 64)})
+		// add total accuracy
+		rows = append(rows, []string{"Total Percentage Accuracy:", "", strconv.FormatFloat(finalResult.AlgorithmAccuracyPercent, 'f', 1, 64) + "%", "", strconv.FormatFloat(finalResult.RecommendationAccuracyPercent, 'f', 1, 64) + "%"})
+
+	}
 
 	err = writer.WriteAll(rows)
 	if err != nil {
@@ -218,7 +280,7 @@ func AccuracyCalculation(number int, amountOfRecommendationResult int) float64 {
 	priorityNumber := PriorityNumberComparison(number, amountOfRecommendationResult)
 
 	result := float64(priorityNumber) / float64(amountOfRecommendationResult)
-	fmt.Printf("Priority Number: %d / amountOfRecommendationResult: %d = %.1f\n", priorityNumber, amountOfRecommendationResult, result)
+	// fmt.Printf("Priority Number: %d / amountOfRecommendationResult: %d = %.1f\n", priorityNumber, amountOfRecommendationResult, result)
 
 	return result
 }
@@ -230,7 +292,7 @@ func AccuracyPercentageCalculation(listOfAccuracy []Accuracy, amountOfSample int
 	var totalAlgorithmAcc float64
 
 	for _, v := range listOfAccuracy {
-		totalRecommendationAcc += v.recommendationResult
+		totalRecommendationAcc += v.value
 		totalAlgorithmAcc += v.algorithmResult
 		// fmt.Printf("Keyword: %s\n", v.keyword)
 		// fmt.Printf("Expected: %s\n", v.expected)
@@ -245,10 +307,10 @@ func AccuracyPercentageCalculation(listOfAccuracy []Accuracy, amountOfSample int
 	algoResult := totalAlgorithmAcc / float64(amountOfSample) * 100
 
 	finalResult := FinalResult{
-		recommendationAccuracyPercent: recomResult,
-		recommendation:                totalRecommendationAcc,
-		algorithmAccuracyPercent:      algoResult,
-		algorithm:                     totalAlgorithmAcc,
+		RecommendationAccuracyPercent: recomResult,
+		Recommendation:                totalRecommendationAcc,
+		AlgorithmAccuracyPercent:      algoResult,
+		Algorithm:                     totalAlgorithmAcc,
 	}
 
 	return finalResult
@@ -285,16 +347,105 @@ func GetExpectedResult(wordId int, expectedKeywords []dictionary.Dictionary) str
 }
 
 type Accuracy struct {
-	keyword              string
-	expected             string
-	order                int
-	recommendationResult float64
-	algorithmResult      float64
+	keyword         string
+	expected        string
+	priorityNumber  int
+	algorithmResult float64
+	value           float64
+	ap              APResult
+}
+
+type APResult struct {
+	Precision        float64
+	Recall           float64
+	AveragePrecision float64
 }
 
 type FinalResult struct {
-	recommendationAccuracyPercent float64
-	recommendation                float64
-	algorithmAccuracyPercent      float64
-	algorithm                     float64
+	RecommendationAccuracyPercent float64
+	Recommendation                float64
+	AlgorithmAccuracyPercent      float64
+	Algorithm                     float64
+}
+
+type MAPResult struct {
+	value      float64
+	percentage float64
+}
+
+type RelevantList struct {
+	Keyword string
+	Label   float64 // 1 = relevant, 0 = not relevant
+}
+
+// calculate the accuracy with the AP method (average precision) and return the average precision
+// Menghitung Average Precision (AP)
+// k = jumlah data yang akan dihitung dari hasil rekomendasi (misal: 10 data pertama atau 5 data pertama)
+func CalculateAveragePrecision(relList []RelevantList, k int) APResult {
+	// Menghitung Precision@k
+	precisionAtK := float64(0)
+	for i := 0; i < k; i++ {
+		precisionAtK += relList[i].Label
+	}
+	precisionAtK /= float64(k)
+
+	// Menghitung recall
+	recall := float64(0)
+	for _, rel := range relList {
+		if rel.Label == 1 {
+			recall++
+		}
+	}
+	recall /= float64(len(relList))
+
+	// Menghitung AP
+	ap := (1 / recall) * precisionAtK
+	if math.IsNaN(ap) {
+		ap = 0
+	}
+
+	return APResult{
+		Precision:        precisionAtK,
+		Recall:           recall,
+		AveragePrecision: ap,
+	}
+}
+
+// calculate MAP (mean average precision) and return the result
+func CalculateMAP(listOfAccuracy []Accuracy) MAPResult {
+	var mapResult float64
+
+	for _, v := range listOfAccuracy {
+		mapResult += v.ap.AveragePrecision
+	}
+
+	mapResult /= float64(len(listOfAccuracy))
+
+	// ubah ke persen
+	persentage := mapResult * 100
+
+	return MAPResult{
+		value:      mapResult,
+		percentage: persentage,
+	}
+}
+
+// filter the recommendation result based on the threshold value and return the relevant list (keyword and label (1 = relevant, 0 = not relevant))
+func FilterByThreshold(recommendationResult []search.RecommendationWord, threshold float64) []RelevantList {
+	var result []RelevantList
+	for _, v := range recommendationResult {
+		if v.Similiarity >= threshold {
+			result = append(result, RelevantList{
+				Keyword: v.Aceh,
+				Label:   1,
+			})
+		} else {
+			result = append(result, RelevantList{
+				Keyword: v.Aceh,
+				Label:   0,
+			})
+		}
+	}
+
+	return result
 }
