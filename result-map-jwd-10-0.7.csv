@@ -1,13 +1,13 @@
-Keyword,Expected,Algorithm Accuracy Result,Priority Number,Average Precision,Precision,Recall
+Keyword,Expected,Algorithm Accuracy Result,Priority Number,Precision,Recall,Average Precision
 yok,yôk,0.80,4,1.00,1.00,1.00
 yoh,yôh,0.80,2,1.00,1.00,1.00
 weng,wéng,0.85,1,1.00,1.00,1.00
 weh,wèh,0.80,2,1.00,1.00,1.00
 wase,wasé,0.88,3,1.00,1.00,1.00
 wareh,waréh,0.91,3,1.00,1.00,1.00
-wajek,wajéb,0.81,4,1.00,1.00,1.00
-wajeb,wajék,0.81,5,1.00,1.00,1.00
+wajek,wajék,0.91,1,1.00,1.00,1.00
+wajeb,wajéb,0.91,1,1.00,1.00,1.00
 utom,utôm,0.87,2,1.00,1.00,1.00
 utoh,utôh,0.87,1,1.00,1.00,1.00
-MAP Results:,,,,1.00
-MAP Percentage Accuracy:,,,,100.0%
+MAP Results:,,,,,,1.00
+MAP Percentage Accuracy:,,,,,,100.0%

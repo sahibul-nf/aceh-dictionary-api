@@ -108,7 +108,7 @@ func main() {
 						value:           value,
 					}
 				}
-				// break
+				break
 			}
 		}
 
@@ -122,7 +122,7 @@ func main() {
 
 	if method == 1 {
 		mapResult = CalculateMAP(listOfAccuracy)
-		fmt.Printf("\nTotal percentage of accuracy for %d data sample using %s algorithm is %.1f%%\n", len(sampleKeywords), algorithm, mapResult.percentage)
+		fmt.Printf("\nTotal percentage of accuracy for %d data sample with threshold %.1f using %s algorithm is %.1f%%\n", len(sampleKeywords), threshold, algorithm, mapResult.percentage)
 	} else {
 		finalResult = AccuracyPercentageCalculation(listOfAccuracy, len(sampleKeywords))
 		fmt.Printf("\nTotal percentage of accuracy for %d data sample using %s algorithm is %.1f%%\n", len(sampleKeywords), algorithm, finalResult.RecommendationAccuracyPercent)
@@ -226,26 +226,29 @@ func SaveToCSV(data []Accuracy, algorithm string, finalResult FinalResult, mapRe
 	// Tulis data ke file CSV
 	var rows [][]string
 	if method == 1 {
-		rows = append(rows, []string{"Keyword", "Expected", "Algorithm Accuracy Result", "Priority Number", "Average Precision", "Precision", "Recall"})
+		rows = append(rows, []string{"No", "Keyword", "Expectation", "Algorithm Accuracy Result", "Priority Number", "Precision", "Recall", "Average Precision"})
 	} else {
-		rows = append(rows, []string{"Keyword", "Expected", "Algorithm Accuracy Result", "Priority Number", "Recommendation Accuracy Result"})
+		rows = append(rows, []string{"No", "Keyword", "Expectation", "Algorithm Accuracy Result", "Priority Number", "Recommendation Accuracy Result"})
 	}
 
-	for _, v := range data {
+	for i, v := range data {
 		var row []string
+		number := strconv.Itoa(i + 1)
 
 		if method == 1 {
 			row = []string{
+				number,
 				v.keyword,
 				v.expected,
 				strconv.FormatFloat(v.algorithmResult, 'f', 2, 64),
 				strconv.Itoa(v.priorityNumber),
-				strconv.FormatFloat(v.ap.AveragePrecision, 'f', 2, 64),
 				strconv.FormatFloat(v.ap.Precision, 'f', 2, 64),
 				strconv.FormatFloat(v.ap.Recall, 'f', 2, 64),
+				strconv.FormatFloat(v.ap.AveragePrecision, 'f', 2, 64),
 			}
 		} else {
 			row = []string{
+				number,
 				v.keyword,
 				v.expected,
 				strconv.FormatFloat(v.algorithmResult, 'f', 2, 64),
@@ -258,14 +261,14 @@ func SaveToCSV(data []Accuracy, algorithm string, finalResult FinalResult, mapRe
 
 	if method == 1 {
 		// add total result
-		rows = append(rows, []string{"MAP Results:", "", "", "", strconv.FormatFloat(mapResult.value, 'f', 2, 64)})
+		rows = append(rows, []string{"", "MAP Results:", "", "", "", "", "", strconv.FormatFloat(mapResult.value, 'f', 2, 64)})
 		// add total accuracy
-		rows = append(rows, []string{"MAP Percentage Accuracy:", "", "", "", strconv.FormatFloat(mapResult.percentage, 'f', 1, 64) + "%"})
+		rows = append(rows, []string{"", "MAP Percentage Accuracy:", "", "", "", "", "", strconv.FormatFloat(mapResult.percentage, 'f', 1, 64) + "%"})
 	} else {
 		// add total result
-		rows = append(rows, []string{"Total Accuracy Results:", "", strconv.FormatFloat(finalResult.Algorithm, 'f', 2, 64), "", strconv.FormatFloat(finalResult.Recommendation, 'f', 2, 64)})
+		rows = append(rows, []string{"", "Total Accuracy Results:", "", strconv.FormatFloat(finalResult.Algorithm, 'f', 2, 64), "", strconv.FormatFloat(finalResult.Recommendation, 'f', 2, 64)})
 		// add total accuracy
-		rows = append(rows, []string{"Total Percentage Accuracy:", "", strconv.FormatFloat(finalResult.AlgorithmAccuracyPercent, 'f', 1, 64) + "%", "", strconv.FormatFloat(finalResult.RecommendationAccuracyPercent, 'f', 1, 64) + "%"})
+		rows = append(rows, []string{"", "Total Percentage Accuracy:", "", strconv.FormatFloat(finalResult.AlgorithmAccuracyPercent, 'f', 1, 64) + "%", "", strconv.FormatFloat(finalResult.RecommendationAccuracyPercent, 'f', 1, 64) + "%"})
 
 	}
 
