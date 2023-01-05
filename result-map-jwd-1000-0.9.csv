@@ -221,7 +221,7 @@ No,Keyword,Expectation,Algorithm Accuracy Result,Priority Number,Precision,Recal
 220,seng,sèng,0.85,10,0.20,0.20,1.00
 221,sel,seunalôp,0.83,4,0.00,0.00,0.00
 222,seksa,séksa,0.88,1,0.00,0.00,0.00
-223,sege,,0.00,0,0.00,0.00,0.00
+223,sege,sègè,0.00,0,0.00,0.00,0.00
 224,sayen,sayén,0.91,1,0.10,0.10,1.00
 225,sawo,sawô,0.88,1,0.00,0.00,0.00
 226,sate,saté,0.88,4,0.30,0.30,1.00
@@ -459,7 +459,7 @@ No,Keyword,Expectation,Algorithm Accuracy Result,Priority Number,Precision,Recal
 458,peuget,peugèt,0.93,2,1.00,1.00,1.00
 459,peugadee,peugadèe,0.96,1,0.60,0.60,1.00
 460,peugabong,peugabông,0.96,1,0.50,0.50,1.00
-461,peueleh,,0.00,0,0.80,0.80,1.00
+461,peueleh,peuèlèh,0.00,0,0.80,0.80,1.00
 462,peuek,peujôk,0.96,3,1.00,1.00,1.00
 463,peudeh,peudéh,0.93,1,0.90,0.90,1.00
 464,peudamee,peudamèe,0.96,1,0.60,0.60,1.00
@@ -712,7 +712,7 @@ No,Keyword,Expectation,Algorithm Accuracy Result,Priority Number,Precision,Recal
 711,lambayong,lambayông,0.96,1,0.50,0.50,1.00
 712,lalorat,lalôrat,0.93,1,0.20,0.20,1.00
 713,lalo,lalô,0.88,9,0.20,0.20,1.00
-714,lalee,,0.00,0,1.00,1.00,1.00
+714,lalee,lalèe,0.00,0,1.00,1.00,1.00
 715,laklem,laklém,0.93,1,0.20,0.20,1.00
 716,lahe,lahèe,0.95,1,0.20,0.20,1.00
 717,lagot,lagôt,0.91,1,0.10,0.10,1.00
@@ -799,7 +799,7 @@ No,Keyword,Expectation,Algorithm Accuracy Result,Priority Number,Precision,Recal
 798,jilet,jilét,0.91,1,0.10,0.10,1.00
 799,jeulamee,jeulamèe,0.96,1,0.30,0.30,1.00
 800,eumbon,eumbôn,0.93,1,0.10,0.10,1.00
-801,kense,,0.00,0,0.00,0.00,0.00
+801,kense,kènsè,0.00,0,0.00,0.00,0.00
 802,keker,keumirém,0.85,6,0.00,0.00,0.00
 803,keh,keuphôn,0.85,3,0.20,0.20,1.00
 804,kayem,kayém,0.91,1,0.20,0.20,1.00
@@ -872,7 +872,7 @@ No,Keyword,Expectation,Algorithm Accuracy Result,Priority Number,Precision,Recal
 871,gutee,gutèe,0.91,1,0.10,0.10,1.00
 872,guree,gurèe,0.91,2,0.40,0.40,1.00
 873,eseukrem,èseukrém,0.83,2,0.00,0.00,0.00
-874,engse,,0.00,0,0.00,0.00,0.00
+874,engse,èngsè,0.00,0,0.00,0.00,0.00
 875,endatu,éndatu,0.89,1,0.00,0.00,0.00
 876,emlak,émlak,0.87,2,0.00,0.00,0.00
 877,eleumee,éleumèe,0.81,6,0.00,0.00,0.00

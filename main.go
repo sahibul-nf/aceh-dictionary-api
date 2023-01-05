@@ -72,8 +72,8 @@ func main() {
 
 	listOfAccuracy := []Accuracy{}
 
-	for i, v := range sampleKeywords {
-		fmt.Printf("\nKeyword ke-%d: %s\n", i, v)
+	for j, v := range sampleKeywords {
+		fmt.Printf("\nKeyword ke-%d: %s\n", j, v)
 
 		result, _ := searchService.GetRecommendationWords(v, algorithm)
 		relList := FilterByThreshold(result, threshold)
@@ -93,7 +93,11 @@ func main() {
 			fmt.Printf("%d. %s = %.2f\n", priorityNumber, r.Aceh, r.Similiarity)
 
 			expectedKeyword = GetExpectedResult(r.ID, expectedKeywords)
-			if expectedKeyword != "" {
+			if expectedKeyword == "" {
+				expectedKeyword = expectedKeywords[j].Aceh
+			}
+
+			if r.Aceh == expectedKeyword {
 				if method == 1 {
 					accuracy.expected = expectedKeyword
 					accuracy.algorithmResult = r.Similiarity
@@ -109,6 +113,10 @@ func main() {
 					}
 				}
 				break
+			} else {
+				accuracy.expected = expectedKeyword
+				accuracy.algorithmResult = 0
+				accuracy.priorityNumber = 0
 			}
 		}
 
