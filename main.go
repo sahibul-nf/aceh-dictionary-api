@@ -234,7 +234,8 @@ func SaveToCSV(data []Accuracy, algorithm string, finalResult FinalResult, mapRe
 	// Tulis data ke file CSV
 	var rows [][]string
 	if method == 1 {
-		rows = append(rows, []string{"No", "Keyword", "Expectation", "Algorithm Accuracy Result", "Priority Number", "Precision", "Recall", "Average Precision"})
+		// rows = append(rows, []string{"No", "Keyword", "Expectation", "Algorithm Accuracy Result", "Priority Number", "Precision", "Recall", "Average Precision"})
+		rows = append(rows, []string{"No", "Keyword", "Expectation", "Algorithm Accuracy Result", "Priority Number", "Average Precision"})
 	} else {
 		rows = append(rows, []string{"No", "Keyword", "Expectation", "Algorithm Accuracy Result", "Priority Number", "Recommendation Accuracy Result"})
 	}
@@ -250,8 +251,8 @@ func SaveToCSV(data []Accuracy, algorithm string, finalResult FinalResult, mapRe
 				v.expected,
 				strconv.FormatFloat(v.algorithmResult, 'f', 2, 64),
 				strconv.Itoa(v.priorityNumber),
-				strconv.FormatFloat(v.ap.Precision, 'f', 2, 64),
-				strconv.FormatFloat(v.ap.Recall, 'f', 2, 64),
+				// strconv.FormatFloat(v.ap.Precision, 'f', 2, 64),
+				// strconv.FormatFloat(v.ap.Recall, 'f', 2, 64),
 				strconv.FormatFloat(v.ap.AveragePrecision, 'f', 2, 64),
 			}
 		} else {
@@ -269,9 +270,11 @@ func SaveToCSV(data []Accuracy, algorithm string, finalResult FinalResult, mapRe
 
 	if method == 1 {
 		// add total result
-		rows = append(rows, []string{"", "MAP Results:", "", "", "", "", "", strconv.FormatFloat(mapResult.value, 'f', 2, 64)})
+		// rows = append(rows, []string{"", "MAP Results:", "", "", "", "", "", strconv.FormatFloat(mapResult.value, 'f', 2, 64)})
+		rows = append(rows, []string{"", "MAP Results:", "", "", "", strconv.FormatFloat(mapResult.value, 'f', 2, 64)})
 		// add total accuracy
-		rows = append(rows, []string{"", "MAP Percentage Accuracy:", "", "", "", "", "", strconv.FormatFloat(mapResult.percentage, 'f', 1, 64) + "%"})
+		// rows = append(rows, []string{"", "MAP Percentage Accuracy:", "", "", "", "", "", strconv.FormatFloat(mapResult.percentage, 'f', 1, 64) + "%"})
+		rows = append(rows, []string{"", "MAP Percentage Accuracy:", "", "", "", strconv.FormatFloat(mapResult.percentage, 'f', 1, 64) + "%"})
 	} else {
 		// add total result
 		rows = append(rows, []string{"", "Total Accuracy Results:", "", strconv.FormatFloat(finalResult.Algorithm, 'f', 2, 64), "", strconv.FormatFloat(finalResult.Recommendation, 'f', 2, 64)})
@@ -394,31 +397,46 @@ type RelevantList struct {
 // k = jumlah data yang akan dihitung dari hasil rekomendasi (misal: 10 data pertama atau 5 data pertama)
 func CalculateAveragePrecision(relList []RelevantList, k int) APResult {
 	// Menghitung Precision@k
-	precisionAtK := float64(0)
-	for i := 0; i < k; i++ {
-		precisionAtK += relList[i].Label
-	}
-	precisionAtK /= float64(k)
+	// precisionAtK := float64(0)
+	// for i := 0; i < k; i++ {
+	// 	if relList[i].Label == 1 {
+	// 		precisionAtK++
+	// 	}
+	// }
+	// precisionAtK /= float64(k)
 
-	// Menghitung recall
-	recall := float64(0)
-	for _, rel := range relList {
-		if rel.Label == 1 {
-			recall++
+	// // Menghitung recall
+	// recall := float64(0)
+	// for _, rel := range relList {
+	// 	if rel.Label == 1 {
+	// 		recall++
+	// 	}
+	// }
+	// recall /= float64(len(relList))
+
+	R := float64(0)            // jumlah relevan (true positive / TP = 1)
+	precisionAtK := float64(0) // jumlah data yang relevan (true positive / TP = 1) yang ditemukan pada k data pertama
+
+	for i := 0; i < k; i++ {
+		if relList[i].Label == 1 {
+			R++
+			precisionAtK += R / float64(i+1)
+			// precisionAtK += 1
 		}
 	}
-	recall /= float64(len(relList))
 
 	// Menghitung AP
-	ap := (1 / recall) * precisionAtK
-	if math.IsNaN(ap) {
-		ap = 0
+	AP := (1 / R) * precisionAtK
+	// AP := R / float64(k)
+
+	if math.IsNaN(AP) {
+		AP = 0
 	}
 
 	return APResult{
-		Precision:        precisionAtK,
-		Recall:           recall,
-		AveragePrecision: ap,
+		// Precision:        precision,
+		// Recall:           recall,
+		AveragePrecision: AP,
 	}
 }
 
@@ -432,7 +450,7 @@ func CalculateMAP(listOfAccuracy []Accuracy) MAPResult {
 
 	mapResult /= float64(len(listOfAccuracy))
 
-	// ubah ke persen
+	// ubah ke persentase
 	persentage := mapResult * 100
 
 	return MAPResult{

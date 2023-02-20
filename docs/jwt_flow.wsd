@@ -1,0 +1,28 @@
+@startuml "JWT Authentication" as jwt
+' participant User #FFEDB6
+' participant Mobile_App #FFEDB6
+' participant REST_API #FFEDB6
+
+actor User
+User -> Mobile_App : login
+activate Mobile_App
+
+Mobile_App -> REST_API : POST /login
+activate REST_API
+
+REST_API -> REST_API : Generate JWT token
+REST_API -> Mobile_App : Return JWT token
+deactivate REST_API
+
+Mobile_App -> Mobile_App : Store JWT token
+deactivate Mobile_App
+
+User -> Mobile_App : Access protected resource or feature
+activate Mobile_App
+
+Mobile_App -> REST_API : Send Request with JWT token
+activate REST_API
+
+REST_API -> REST_API : Validate JWT token
+REST_API -> Mobile_App : Return Response
+@enduml
