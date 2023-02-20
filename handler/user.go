@@ -4,6 +4,7 @@ import (
 	"aceh-dictionary-api/auth"
 	"aceh-dictionary-api/helper"
 	"aceh-dictionary-api/user"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -52,6 +53,14 @@ func (h *userHandler) Login(c *gin.Context) {
 
 		response := helper.APIResponse("Failed to login", http.StatusBadRequest, nil, errors)
 		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	isEmailNotRegistered := h.userService.IsEmailAvailable(input.Email)
+	if isEmailNotRegistered {
+		errors := errors.New("email not registered")
+		response := helper.APIResponse("Failed to login", http.StatusUnauthorized, nil, errors.Error())
+		c.JSON(http.StatusUnauthorized, response)
 		return
 	}
 
