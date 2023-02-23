@@ -76,6 +76,10 @@ func (s *service) GetWord(id int) (DictionaryFormatter, error) {
 	wordSearchImage := strings.Split(dictionary.English, ",")[0]
 	image, err := s.unsplashRepo.GetPhotoByKeyword(wordSearchImage, 3, "portrait")
 	if err != nil {
+		if err.Error() == "photo not found" {
+			return dictionaryFormatter, nil
+		}
+		
 		return dictionaryFormatter, err
 	}
 
