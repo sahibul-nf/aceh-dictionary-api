@@ -52,7 +52,7 @@ func (r *repository) GetPhotoByKeyword(keyword string, count int, orientation st
 
 	if res.StatusCode != 200 {
 		if res.StatusCode == 404 {
-			return UnsplashResponse{}, fmt.Errorf("keyword not found")
+			return UnsplashResponse{}, fmt.Errorf("photo not found")
 		}
 
 		return UnsplashResponse{}, fmt.Errorf("error: %s", resData)
