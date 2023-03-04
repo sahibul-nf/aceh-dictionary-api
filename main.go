@@ -92,10 +92,10 @@ func main() {
 			priorityNumber = i + 1
 			fmt.Printf("%d. %s = %.2f\n", priorityNumber, r.Aceh, r.Similiarity)
 
-			expectedKeyword = GetExpectedResult(r.ID, expectedKeywords)
-			if expectedKeyword == "" {
-				expectedKeyword = expectedKeywords[j].Aceh
-			}
+			// expectedKeyword = GetExpectedResult(r, expectedKeywords)
+			// if expectedKeyword == "" {
+			expectedKeyword = expectedKeywords[j].Aceh
+			// }
 
 			if r.Aceh == expectedKeyword {
 				if method == 1 {
@@ -159,6 +159,11 @@ func GetSampleData(db *gorm.DB, re []*regexp.Regexp, count int) []dictionary.Dic
 		if len(sample) == count {
 			break
 		}
+
+		// get data sample with range of 1 - 100
+		// if d.ID >= 3250 && d.ID <= 3265 {
+		// 	sample = append(sample, d)
+		// }
 
 		// fmt.Printf("ID: %d, WORD: %s\n", d.ID, d.Aceh)
 		sample = append(sample, d)
@@ -347,11 +352,13 @@ func PriorityNumberComparison(number int, amountOfRecommendationResult int) int 
 	return amountOfRecommendationResult - number + 1
 }
 
-func GetExpectedResult(wordId int, expectedKeywords []dictionary.Dictionary) string {
+func GetExpectedResult(word search.RecommendationWord, expectedKeywords []dictionary.Dictionary) string {
 
 	var expextedResult string
 	for _, v := range expectedKeywords {
-		if v.ID == wordId {
+		if v.ID == word.ID {
+			fmt.Printf("%d - %s \n", v.ID, v.Aceh)
+			fmt.Printf("%d - %s \n", word.ID, word.Aceh)
 			expextedResult = v.Aceh
 			break
 		}
