@@ -1,9 +1,11 @@
 package search
 
 import (
+	"math"
 	"sort"
 
-	"github.com/agext/levenshtein"
+	// "github.com/agext/levenshtein"
+	"github.com/agnivade/levenshtein"
 	jwd "github.com/jhvst/go-jaro-winkler-distance"
 )
 
@@ -36,21 +38,27 @@ func (s *service) GetRecommendationWords(query string, algorithm string) ([]Reco
 		}
 
 		if algorithm == "lev" { // levenshtein distance
-			result = levenshtein.Match(query, v.Aceh, nil)
+			lev := levenshtein.ComputeDistance(query, v.Aceh)
+			// normalisasi nilai levenshtein distance
+			result = (math.Max(float64(len(query)), float64(len(v.Aceh))) - float64(lev)) / math.Max(float64(len(query)), float64(len(v.Aceh)))
 		}
 
-		if result >= 0.75 {
-			recommendationWords = append(recommendationWords, RecommendationWord{
-				ID:          v.ID,
-				Aceh:        v.Aceh,
-				Indonesia:   v.Indonesia,
-				English:     v.English,
-				Similiarity: result,
-			})
-		}
+		recommendationWords = append(recommendationWords, RecommendationWord{
+			ID:          v.ID,
+			Aceh:        v.Aceh,
+			Indonesia:   v.Indonesia,
+			English:     v.English,
+			Similiarity: result,
+		})
 	}
 
 	sort.Slice(recommendationWords, func(i, j int) bool {
+		// urutkan berdasarkan nilai similarity
+		// dan jika nilai similarity sama, urutkan berdasarkan nilai alphabet
+		if recommendationWords[i].Similiarity == recommendationWords[j].Similiarity {
+			return recommendationWords[i].Aceh > recommendationWords[j].Aceh
+		}
+
 		return recommendationWords[i].Similiarity > recommendationWords[j].Similiarity
 	})
 
@@ -63,8 +71,7 @@ func (s *service) GetRecommendationWords(query string, algorithm string) ([]Reco
 			}
 		}
 		return filters, nil
-	} else {
-		return recommendationWords, nil
 	}
 
+	return recommendationWords, nil
 }
